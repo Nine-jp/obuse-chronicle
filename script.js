@@ -41,64 +41,9 @@ function initMap() {
 
     infoWindow = new google.maps.InfoWindow();
 
-    // Try HTML5 geolocation.
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const pos = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                };
-
-                new google.maps.Marker({
-                    position: pos,
-                    map: map,
-                    title: "現在地",
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 7,
-                        fillColor: "#4285F4",
-                        fillOpacity: 1,
-                        strokeWeight: 0,
-                    },
-                });
-
-                map.setCenter(pos);
-            },
-            (error) => {
-                let errorMessage = "位置情報の取得に失敗しました。\n";
-                switch (error.code) {
-                    case error.PERMISSION_DENIED:
-                        errorMessage += "位置情報の利用が許可されていません。";
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        errorMessage += "現在地を特定できません。";
-                        break;
-                    case error.TIMEOUT:
-                        errorMessage += "タイムアウトしました。";
-                        break;
-                    case error.UNKNOWN_ERROR:
-                        errorMessage += "不明なエラーが発生しました。";
-                        break;
-                }
-                alert(errorMessage + " (エラーコード: " + error.code + ")");
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0
-            }
-        );
-    } else {
-        // Geolocationがサポートされていない場合
-        alert("お使いのブラウザは位置情報に対応していません。");
-    }
-
     addMarkers();
     updateProgress();
 }
-
-
 
 // マーカーの追加
 function addMarkers() {
@@ -383,7 +328,11 @@ function startStoryAnimation() {
         // フェードアウト完了後、メインゲーム画面へ遷移
         storyAnimationTimeoutId = setTimeout(() => {
             showScreen('main-game-container');
-            
+            if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
+                initMap();
+            } else {
+                window.initMap = initMap;
+            }
         }, 500); // CSSのtransition時間(0.5s)に合わせる
     }, 4500); // 4.5秒後 (フェードイン1.5秒 + 表示3秒)
 }

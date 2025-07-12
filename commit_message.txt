@@ -1,0 +1,1 @@
+Revert to a clean state and redeploy

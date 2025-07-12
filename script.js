@@ -41,8 +41,51 @@ function initMap() {
 
     infoWindow = new google.maps.InfoWindow();
 
+    // Try HTML5 geolocation.
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+
+                new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    title: "現在地",
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 7,
+                        fillColor: "#4285F4",
+                        fillOpacity: 1,
+                        strokeWeight: 0,
+                    },
+                });
+
+                map.setCenter(pos);
+            },
+            () => {
+                handleLocationError(true, infoWindow, map.getCenter());
+            }
+        );
+    } else {
+        // Browser doesn't support Geolocation
+        handleLocationError(false, infoWindow, map.getCenter());
+    }
+
     addMarkers();
     updateProgress();
+}
+
+function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(
+        browserHasGeolocation
+            ? "エラー: 位置情報サービスに失敗しました。"
+            : "エラー: お使いのブラウザは位置情報に対応していません。"
+    );
+    infoWindow.open(map);
 }
 
 // マーカーの追加

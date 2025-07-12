@@ -1,0 +1,395 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #000; /* Default background for screens */
+    color: #fff; /* Default text color for screens */
+}
+
+/* General screen styles */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
+    color: #fff;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+    z-index: 1000; /* Ensure screens are on top */
+}
+
+.screen.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 1000; /* Ensure active screen is on top */
+}
+
+/* Splash Screen */
+#splash-screen {
+    text-align: center;
+}
+
+.game-title {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 3em;
+    margin-bottom: 10px;
+    color: #FFD700; /* Gold color for title */
+}
+
+.game-subtitle {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 1.5em;
+    margin-bottom: 30px;
+}
+
+.action-button {
+    padding: 15px 30px;
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 1.2em;
+    background-color: #008CBA; /* Blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+    background-color: #007bb5;
+}
+
+/* Story Intro Screen */
+#story-intro {
+    justify-content: flex-end; /* Align content to bottom for scrolling effect */
+    padding-bottom: 10%; /* Space for the text to scroll into view */
+    overflow: hidden; /* Hide overflowing text */
+}
+
+.story-text-container {
+    position: absolute;
+    bottom: 0;
+    width: 80%;
+    height: 100%; /* Changed from max-height */
+    overflow: hidden;
+    text-align: center;
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 1.5em;
+    color: #fff;
+    line-height: 1.8;
+}
+
+#story-text {
+    width: 100%;
+    opacity: 0; /* Start invisible */
+    transition: opacity 1.5s ease-in-out; /* Smooth fade transition */
+}
+
+#story-text.fade-in {
+    opacity: 1; /* Fade in */
+}
+
+#story-text.fade-out {
+    opacity: 0; /* Fade out */
+}
+
+/* Adjust story-intro and story-text-container for centering */
+#story-intro {
+    justify-content: center; /* Center content vertically */
+    padding-bottom: 0; /* Remove padding */
+}
+
+.story-text-container {
+    position: relative; /* Change to relative */
+    width: 80%;
+    height: auto; /* Allow height to adjust to content */
+    overflow: visible; /* Allow content to be visible */
+    display: flex; /* Use flexbox for centering text */
+    align-items: center; /* Center text vertically */
+    justify-content: center; /* Center text horizontally */
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 1.5em;
+    color: #fff;
+    line-height: 1.8;
+    text-align: center; /* Ensure text is centered */
+}
+
+#story-intro #skip-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1001; /* Ensure skip button is above story text */
+}
+
+/* Main Game Container */
+#main-game-container {
+    z-index: 1;
+    position: relative; /* For absolute positioning of info-panel */
+    width: 100%;
+    height: 100%;
+}
+
+#map-container {
+    width: 100%;
+    height: 100vh; /* Map always full screen */
+    position: relative;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+#info-panel {
+    background-color: #f0f0d0;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 25vh;
+    overflow-y: auto;
+    box-shadow: 0 -3px 5px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #333; /* Added for readability */
+}
+
+#site-title {
+    text-align: center;
+    color: #333;
+    margin-top: 0;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+#spot-details,
+#progress-section {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ccc;
+}
+
+#spot-details h2,
+#progress-section h3 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+}
+
+#spot-details p,
+#progress-section p {
+    margin: 3px 0;
+    font-size: 0.85em;
+}
+
+#achievements {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.achievement-badge {
+    width: 80px;
+    height: auto;
+    background-color: #eee;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    text-align: center;
+    color: #666;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.achievement-badge img {
+    vertical-align: middle;
+    margin-bottom: 5px;
+}
+
+#action-buttons {
+    border-bottom: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 5px;
+}
+
+button {
+    padding: 8px 12px;
+    font-size: 0.85em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    min-width: 80px; /* ボタンが小さくなりすぎないように */
+}
+
+#clear-footsteps {
+    background-color: #4CAF50; /* 緑系 */
+}
+#clear-footsteps:active {
+    background-color: #45a049;
+}
+
+#reset-adventure {
+    background-color: #f44336; /* 赤系 */
+}
+#reset-adventure:active {
+    background-color: #da190b;
+}
+
+#record-visit {
+    background-color: #008CBA; /* 青系など、目立つ色に */
+    margin-top: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+#record-visit:active {
+    background-color: #007bb5;
+}
+
+/* マップ上の情報ウィンドウのスタイル */
+.gm-style .gm-iw-c {
+    padding: 0 !important;
+}
+
+.gm-style .gm-iw-d {
+    overflow: hidden !important;
+}
+
+.gm-ui-hover-effect {
+    display: none !important;
+}
+
+.info-window-content {
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.info-window-content h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: #0056b3;
+}
+
+.info-window-content p {
+    margin-bottom: 5px;
+}
+
+.info-window-content button {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.info-window-content button:hover {
+    background-color: #218838;
+}
+
+/* レスポンシブデザインの調整 */
+@media (max-width: 768px) {
+    #info-panel {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 40vh; /* 情報パネルの高さ */
+        padding: 10px;
+        transition: bottom 0.3s ease; /* スムーズなアニメーション */
+        z-index: 2; /* マップより手前 */
+        background-color: #f0f0d0; /* 背景色を再設定 */
+    }
+
+    #info-panel.minimized {
+        bottom: -40vh; /* 画面外に隠す */
+    }
+
+    #toggle-panel-button {
+        position: absolute;
+        bottom: 40vh; /* パネルの上端に配置 */
+        right: 10px;
+        background-color: #666;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px 5px 0 0; /* 上角を丸める */
+        cursor: pointer;
+        z-index: 3; /* パネルより手前 */
+        transition: bottom 0.3s ease;
+    }
+
+    #info-panel.minimized + #toggle-panel-button {
+        bottom: 0; /* パネルが隠れたら、ボタンは画面下部に移動 */
+    }
+
+    #site-title {
+        font-size: 1em;
+        margin-top: 0;
+    }
+
+    #spot-details h2,
+    #progress-section h3 {
+        font-size: 1em;
+    }
+
+    #spot-details p,
+    #progress-section p {
+        font-size: 0.8em;
+    }
+
+    button {
+        padding: 6px 10px;
+        font-size: 0.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    #info-panel {
+        padding: 8px;
+    }
+
+    #site-title {
+        font-size: 0.9em;
+    }
+
+    #spot-details h2,
+    #progress-section h3 {
+        font-size: 0.9em;
+    }
+
+    #spot-details p,
+    #progress-section p {
+        font-size: 0.75em;
+    }
+
+    button {
+        font-size: 0.75em;
+        padding: 5px 8px;
+    }
+}

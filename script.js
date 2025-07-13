@@ -1,3 +1,5 @@
+const GOOGLE_MAPS_API_KEY = "AIzaSyAy8Z-koUIq221qgyAmyW8W3Wn2ZZT0KEk"; // TODO: このAPIキーは、コミットしない別のファイルに移動するか、環境変数として設定してください。
+
 let map;
 let markers = [];
 let infoWindow;
@@ -312,6 +314,15 @@ function showScreen(screenId) {
     document.getElementById(screenId).classList.add('active');
 }
 
+// Google Maps APIのスクリプトを動的に読み込む
+function loadGoogleMapsScript() {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+}
+
 // ゲーム開始時の処理
 document.addEventListener('DOMContentLoaded', () => {
     showScreen('splash-screen');
@@ -330,12 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
         endStoryAnimation();
         showScreen('main-game-container');
         // Google Mapsの初期化はメインゲーム画面表示後に行う
-        if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
-            initMap();
-        } else {
-            // Google Maps APIがまだロードされていない場合
-            window.initMap = initMap; // グローバルに設定してAPIロード後に呼び出されるようにする
-        }
+        loadGoogleMapsScript();
     });
 
     // 情報パネルのトグル機能
@@ -371,11 +377,7 @@ function startStoryAnimation() {
         // フェードアウト完了後、メインゲーム画面へ遷移
         storyAnimationTimeoutId = setTimeout(() => {
             showScreen('main-game-container');
-            if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
-                initMap();
-            } else {
-                window.initMap = initMap;
-            }
+            loadGoogleMapsScript();
         }, 500); // CSSのtransition時間(0.5s)に合わせる
     }, 4500); // 4.5秒後 (フェードイン1.5秒 + 表示3秒)
 }

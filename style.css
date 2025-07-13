@@ -43,20 +43,31 @@ body {
     text-align: center;
 }
 
-.game-title {
+.game-title-line1,
+.game-title-line2 {
     font-family: 'DotGothic16', sans-serif;
-    font-size: 3em;
-    margin-bottom: 10px;
-    color: #FFD700; /* Gold color for title */
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background: linear-gradient(to bottom, #00008B, #FFA500, #FFFF00); /* 上から下へのグラデーション */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
 }
 
-.game-subtitle {
-    font-family: 'DotGothic16', sans-serif;
-    font-size: 1.5em;
-    margin-bottom: 30px;
+.game-title-line1 {
+    font-size: 3.5em; /* 調整が必要 */
+    line-height: 1;
+}
+
+.game-title-line2 {
+    font-size: 2.5em; /* 調整が必要 */
+    line-height: 1;
 }
 
 .action-button {
+    margin-top: 40px; /* 2行分のスペースを想定 */
     padding: 15px 30px;
     font-family: 'DotGothic16', sans-serif;
     font-size: 1.2em;
@@ -74,28 +85,32 @@ body {
 
 /* Story Intro Screen */
 #story-intro {
-    justify-content: flex-end; /* Align content to bottom for scrolling effect */
-    padding-bottom: 10%; /* Space for the text to scroll into view */
-    overflow: hidden; /* Hide overflowing text */
+    justify-content: center; /* コンテンツを垂直方向中央に配置 */
+    padding-bottom: 0;       /* 下部のパディングを削除 */
+    overflow: hidden; /* 隠れた部分を非表示（全体のスクロールには影響しない）*/
 }
 
 .story-text-container {
-    position: absolute;
-    bottom: 0;
+    position: relative; /* 親要素基準で相対配置（flexboxと組み合わせて中央寄せに必要） */
     width: 80%;
-    height: 100%; /* Changed from max-height */
-    overflow: hidden;
-    text-align: center;
+    height: auto; /* コンテンツに合わせて高さを調整 */
+    overflow: visible; /* コンテンツのはみ出しを許可（中央寄せにはこちらが適切） */
+    display: flex;      /* flexboxを使用してテキストを中央寄せにする */
+    flex-direction: column; /* テキストの段落が縦に並ぶように */
+    align-items: center; /* 子要素を垂直方向中央に配置 */
+    justify-content: center; /* 子要素を水平方向中央に配置 */
     font-family: 'DotGothic16', sans-serif;
-    font-size: 1.5em;
+    font-size: 1.5em; /* 基本のフォントサイズ */
     color: #fff;
     line-height: 1.8;
+    text-align: center; /* テキスト自体を中央揃えにする */
 }
 
 #story-text {
     width: 100%;
     opacity: 0; /* Start invisible */
     transition: opacity 1.5s ease-in-out; /* Smooth fade transition */
+    white-space: pre-wrap; /* テキスト内の改行をHTMLで表示する */
 }
 
 #story-text.fade-in {
@@ -106,27 +121,7 @@ body {
     opacity: 0; /* Fade out */
 }
 
-/* Adjust story-intro and story-text-container for centering */
-#story-intro {
-    justify-content: center; /* Center content vertically */
-    padding-bottom: 0; /* Remove padding */
-}
-
-.story-text-container {
-    position: relative; /* Change to relative */
-    width: 80%;
-    height: auto; /* Allow height to adjust to content */
-    overflow: visible; /* Allow content to be visible */
-    display: flex; /* Use flexbox for centering text */
-    align-items: center; /* Center text vertically */
-    justify-content: center; /* Center text horizontally */
-    font-family: 'DotGothic16', sans-serif;
-    font-size: 1.5em;
-    color: #fff;
-    line-height: 1.8;
-    text-align: center; /* Ensure text is centered */
-}
-
+/* #story-intro #skip-button の位置は変更なし */
 #story-intro #skip-button {
     position: absolute;
     bottom: 20px;
@@ -367,6 +362,10 @@ button {
         padding: 6px 10px;
         font-size: 0.8em;
     }
+
+    .story-text-container {
+        font-size: 1.3em; /* スマートフォンで1行に収まるように調整 */
+    }
 }
 
 @media (max-width: 480px) {
@@ -391,5 +390,9 @@ button {
     button {
         font-size: 0.75em;
         padding: 5px 8px;
+    }
+
+    .story-text-container {
+        font-size: 1.1em; /* さらに小さい画面向けに調整 */
     }
 }

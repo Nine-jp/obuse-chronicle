@@ -4,60 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Obuse Chronicle: Dawn of the Pilgrim</title>
+    <link rel="icon" href="assets/icon_shrine.png">
     <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for DotGothic16 -->
     <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="splash-screen" class="screen active">
-        <div class="title-group">
-            <h1 class="game-title-line1">Obuse Chronicle:</h1>
-            <h2 class="game-title-line2">Dawn of the Pilgrim</h2>
-        </div>
-        <div class="button-group">
-            <button id="start-button" class="action-button">旅立ちの刻</button>
-        </div>
+    <!-- Splash Screen (Title Screen) -->
+    <div id="splash-screen" class="screen">
+        <h1 class="game-title">Obuse Chronicle: Dawn of the Pilgrim</h1>
+        <p class="game-subtitle">巡礼の暁</p>
+        <button id="start-button" class="action-button">旅立ちの刻</button>
     </div>
 
+    <!-- Story Intro Screen -->
     <div id="story-intro" class="screen">
         <div class="story-text-container">
-            <p id="story-text">
-                長い旅路の果てに、巡礼者は小布施の地に辿り着いた。<br>
-                古き歴史と豊かな自然が息づくこの場所で、新たな物語が始まる。<br>
-                しかし、その道は平坦ではない。<br>
-                隠された謎、秘められた真実が、あなたの訪れを待っている。<br>
-                さあ、巡礼の旅を再開し、小布施の神秘を解き明かせ。
-            </p>
+            <p id="story-text"></p>
         </div>
         <button id="skip-button" class="action-button">スキップ</button>
     </div>
 
+    <!-- Main Game Container (Map and Info Panel) -->
     <div id="main-game-container" class="screen">
         <div id="map-container">
             <div id="map"></div>
         </div>
+
         <div id="info-panel">
-            <h1 id="site-title">現在地情報</h1>
+            <h1 id="site-title">Obuse Chronicle: Dawn of the Pilgrim</h1>
+
             <div id="spot-details">
-                <h2>スポット名：</h2>
-                <p>詳細：</p>
-                <p>距離：</p>
+                <h2 id="spot-name"></h2>
+                <p id="spot-description"></p>
+                <p id="visited-status"></p>
+                <button id="record-visit" style="display: none;">記録する</button>
             </div>
+
             <div id="progress-section">
-                <h3>巡礼の進捗：</h3>
-                <p>訪問済みの場所：<span id="visited-count">0</span> / <span id="total-spots">0</span></p>
+                <h3>ぼうけんのしょ</h3>
+                <p id="overall-progress"></p>
+                <p id="discovery-count"></p>
                 <div id="achievements">
-                    </div>
+                    <!-- アチーブメントバッジはJavaScriptで動的に追加されます -->
+                </div>
             </div>
+
             <div id="action-buttons">
-                <button id="record-visit">ここを巡礼した</button>
-                <button id="clear-footsteps">足跡をクリア</button>
+                <button id="clear-footsteps">足跡を消す</button>
                 <button id="reset-adventure">冒険をリセット</button>
             </div>
-            <button id="toggle-panel-button">パネルを開閉</button>
         </div>
+        <button id="toggle-panel-button">書を閉じる</button>
     </div>
 
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHFXr_mTffBeI4fyf56WQqYYRgbOwADTQ&callback=initMap"></script>
+    <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

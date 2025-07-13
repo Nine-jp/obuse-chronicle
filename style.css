@@ -15,53 +15,54 @@ body {
 
 /* General screen styles */
 .screen {
-    position: relative; /* 子要素のabsolute配置の基準にする */
+    position: relative;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column; /* 垂直方向の配置 */
-    align-items: center; /* 水平方向の中央揃え */
-    justify-content: space-around; /* ★変更: コンテンツを垂直方向に均等に配置 */
-    padding: 0; /* paddingをリセット */
+    display: grid; /* ★変更: flexからgridへ */
+    grid-template-rows: 0.8fr auto auto 1.2fr; /* ★調整: 上余白,タイトル,ボタン,下余白 (タイトルを中央より少し上に、ボタンは下半分中央付近に) */
+    align-items: center; /* グリッドアイテムを垂直方向中央に揃える */
+    justify-items: center; /* グリッドアイテムを水平方向中央に揃える */
+    padding: 0;
     background-color: #000;
     color: #fff;
     opacity: 0;
     visibility: hidden;
     transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
-    z-index: 1000; /* Ensure screens are on top */
+    z-index: 1000;
 }
 
 .screen.active {
     opacity: 1;
     visibility: visible;
-    z-index: 1000; /* Ensure active screen is on top */
+    z-index: 1000;
 }
 
 /* Splash Screen */
 #splash-screen {
     text-align: center;
-    /* #splash-screen自体もflexコンテナとして設定し、内部のtitle-groupとbutton-groupを配置 */
-    display: flex; /* ★追加: #splash-screenもflexコンテナにする */
-    flex-direction: column; /* ★追加: #splash-screenも垂直方向のflexにする */
-    justify-content: space-around; /* ★追加: #splash-screen内でもコンテンツを均等配置 */
-    align-items: center; /* ★追加: #splash-screen内での水平中央揃え */
+    /* .screenで既にgrid設定済みなので、ここでは個別のflex設定を削除・リセット */
+    display: grid; /* ★追加: .screenと同じ設定を明示的に */
+    grid-template-rows: 0.8fr auto auto 1.2fr; /* ★追加: .screenと同じ設定を明示的に */
+    align-items: center; /* ★追加: .screenと同じ設定を明示的に */
+    justify-items: center; /* ★追加: .screenと同じ設定を明示的に */
     padding: 0; /* paddingをリセット */
 }
 
 /* タイトルグループのスタイル */
 .title-group {
-    /* 必要であれば、ここにマージンなどを追加して、タイトル全体の位置を微調整 */
-    margin-top: -5vh; /* ★調整: タイトルグループ全体を少し上にずらす（例） */
+    grid-row: 2; /* ★追加: 2番目の行に配置 */
+    margin: 0; /* 不要なマージンをリセット */
+    padding: 0; /* 不要なパディングをリセット */
 }
 
 /* 修正されたタイトルスタイル: グラデーションを適用 */
 .game-title-line1,
 .game-title-line2 {
     font-family: 'DotGothic16', sans-serif;
-    margin: 0;
-    padding: 0;
+    margin: 0; /* ここもリセット */
+    padding: 0; /* ここもリセット */
     text-align: center;
     background: linear-gradient(to bottom, #00008B, #FFA500, #FFFF00); /* 上から下へのグラデーション */
     -webkit-background-clip: text;
@@ -78,15 +79,15 @@ body {
 .game-title-line2 {
     font-size: 2.5em; /* 必要に応じて調整 */
     line-height: 1;
-    margin-bottom: 0; /* ボタンとの間の余白は不要 */
     margin-top: 0.8em; /* Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
+    margin-bottom: 0; /* ★修正: ボタンとの間の余白はグリッドで制御するため0 */
 }
 
 /* ボタングループのスタイル */
 .button-group {
-    /* 必要であれば、ここにマージンなどを追加して、ボタン全体の位置を微調整 */
-    /* 例えば、flex-endになったときに下からどれくらい離すか */
-    margin-bottom: 5vh; /* ★調整: ボタングループ全体を少し上にずらす（例） */
+    grid-row: 3; /* ★追加: 3番目の行に配置 */
+    margin: 0; /* 不要なマージンをリセット */
+    padding: 0; /* 不要なパディングをリセット */
 }
 
 .action-button {
@@ -348,24 +349,26 @@ button {
 
 /* レスポンシブデザインの調整 */
 @media (max-width: 768px) {
+    /* .screen および #splash-screen の grid-template-rows を必要に応じて調整 */
+    .screen, #splash-screen {
+        grid-template-rows: 0.7fr auto auto 1.3fr; /* スマホ向け調整例 */
+    }
     /* スマホ画面でのフォントサイズ調整 */
     .game-title-line1 {
         font-size: 2.5em; /* スマホでの「Obuse Chronicle:」のフォントサイズ */
     }
     .game-title-line2 {
         font-size: 1.8em; /* スマホでの「Dawn of the Pilgrim」のフォントサイズ */
-        margin-bottom: 0; /* absolute配置になったのでこの余白は不要 */
+        margin-bottom: 0; /* グリッドで制御するため0 */
         margin-top: 0.8em; /* Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
     }
 
-    /* .title-group の調整 */
+    /* .title-group および .button-group の個別のマージンは原則不要になる */
     .title-group {
-        margin-top: -5vh; /* スマホでもタイトルグループ全体を少し上に */
+        margin-top: 0; /* リセット */
     }
-
-    /* .button-group の調整 */
     .button-group {
-        margin-bottom: 5vh; /* スマホでもボタングループ全体を少し上に */
+        margin-bottom: 0; /* リセット */
     }
 
     #info-panel {
@@ -424,24 +427,26 @@ button {
 }
 
 @media (max-width: 480px) {
+    /* .screen および #splash-screen の grid-template-rows を必要に応じて調整 */
+    .screen, #splash-screen {
+        grid-template-rows: 0.6fr auto auto 1.4fr; /* さらに小さいスマホ向け調整例 */
+    }
     /* より小さいスマホ画面でのフォントサイズ調整 */
     .game-title-line1 {
         font-size: 2em; /* より小さいスマホ画面での「Obuse Chronicle:」のフォントサイズ */
     }
     .game-title-line2 {
         font-size: 1.5em; /* より小さいスマホ画面での「Dawn of the Pilgrim」のフォントサイズ */
-        margin-bottom: 0; /* absolute配置になったのでこの余白は不要 */
+        margin-bottom: 0; /* グリッドで制御するため0 */
         margin-top: 0.8em; /* Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
     }
 
-    /* .title-group の調整 */
+    /* .title-group および .button-group の個別のマージンは原則不要になる */
     .title-group {
-        margin-top: -5vh; /* より小さいスマホでもタイトルグループ全体を少し上に */
+        margin-top: 0; /* リセット */
     }
-
-    /* .button-group の調整 */
     .button-group {
-        margin-bottom: 5vh; /* より小さいスマホでもボタングループ全体を少し上に */
+        margin-bottom: 0; /* リセット */
     }
 
     #info-panel {

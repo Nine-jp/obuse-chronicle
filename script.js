@@ -39,7 +39,8 @@ function initMap() {
         fullscreenControl: false // フルスクリーンコントロールを非表示
     });
 
-    infoWindow = new google.maps.InfoWindow();
+    // ここで infoWindow を初期化するのではなく、マーカーのクリックイベント内で個別に作成します
+    // infoWindow = new google.maps.InfoWindow(); // この行は削除またはコメントアウト
 
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
@@ -75,22 +76,28 @@ function initMap() {
     }
 
     addMarkers();
-    updateProgress();
+    updateInfoPanel(); // initMap呼び出し時に情報パネルを更新
 }
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-    infoWindow.setPosition(pos);
-    infoWindow.setContent(
+    // この infoWindow はローカルスコープで作成されるため、直接アクセスできません。
+    // エラー表示のためには、一時的な情報ウィンドウを作成するか、他の方法を検討する必要があります。
+    // 今回は、メッセージをコンソールに出力するだけに留めます。
+    console.error(
         browserHasGeolocation
             ? "エラー: 位置情報サービスに失敗しました。"
             : "エラー: お使いのブラウザは位置情報に対応していません。"
     );
-    infoWindow.open(map);
+    // もし infoWindow がグローバルに定義されている場合は、infoWindow.setPosition(pos); infoWindow.open(map); を追加できます。
 }
 
 // マーカーの追加
 function addMarkers() {
-    currentSpotsData.forEach((spot, index) => {
+    // 既存のマーカーをクリア
+    markers.forEach(marker => marker.setMap(null));
+    markers = [];
+
+    currentSpotsData.forEach((spot) => { // index は不要なので削除
         const marker = new google.maps.Marker({
             position: { lat: spot.latitude, lng: spot.longitude },
             map: map,
@@ -99,13 +106,44 @@ function addMarkers() {
             opacity: spot.visited ? 0.5 : 1.0 // 訪問済みの場合、半透明にする
         });
 
+        // 情報ウィンドウのコンテンツを作成 (initMap内で作成するように変更)
+        const infoWindowContent = `
+            <div class="info-window-content">
+                <h3>${spot.name}</h3>
+                <p><strong>発見状況:</strong> ${spot.visited ? '済' : '未'}</p>
+                <p><strong>説明:</strong> ${spot.description}</p>
+                ${(spot.type === 'shrine' || spot.type === 'temple') && !spot.visited ? 
+                    `<button id="record-visit-${spot.id}">巡礼を記録</button>` : ''}
+            </div>
+        `;
+
+        const infoWindow = new google.maps.InfoWindow({
+            content: infoWindowContent,
+        });
+
         marker.addListener('click', () => {
             // 既に開いている情報ウィンドウがあれば閉じる
             if (currentInfoWindow) {
                 currentInfoWindow.close();
             }
-            displaySpotDetails(spot);
+            infoWindow.open(map, marker);
             currentInfoWindow = infoWindow; // 現在開いている情報ウィンドウを更新
+
+            // 情報パネルの現在地情報を更新
+            document.getElementById('current-spot-name').textContent = spot.name;
+            document.getElementById('current-spot-description').textContent = spot.description;
+
+            // 情報ウィンドウ内のボタンにイベントリスナーを設定
+            google.maps.event.addListenerOnce(infoWindow, 'domready', () => {
+                const recordVisitButton = document.getElementById(`record-visit-${spot.id}`);
+                if (recordVisitButton) {
+                    recordVisitButton.addEventListener('click', () => {
+                        recordVisit(spot.id);
+                        // 記録後に情報ウィンドウを閉じる
+                        infoWindow.close();
+                    });
+                }
+            });
         });
         markers.push(marker);
     });
@@ -113,52 +151,40 @@ function addMarkers() {
 
 // マーカーアイコンを返す関数 (visited パラメータを削除)
 function getMarkerIcon(type) {
-    let iconBase = 'assets/';
     let iconUrl;
     let iconSize = 32; // デフォルトサイズ
 
     // 画面幅が768px以下の場合、アイコンサイズを調整
     if (window.innerWidth <= 768) {
-        iconSize = 40; 
+        iconSize = 40;
     }
 
-    if (type === 'shrine') {
-        iconUrl = iconBase + 'icon_shrine.png';
-    } else if (type === 'temple') {
-        iconUrl = iconBase + 'icon_temple.png';
-    } else if (type === 'soba') {
-        iconUrl = iconBase + 'icon_soba.png'; // お蕎麦屋さんは訪問済みアイコンなし
-    }
-
-    return {
-        url: iconUrl,
-        scaledSize: new google.maps.Size(iconSize, iconSize) // アイコンのサイズ
+    // 青い丸のアイコンを適用
+    const blueDotIcon = {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 8, // アイコンのサイズ
+        fillColor: '#0000FF', // 青色
+        fillOpacity: 1,
+        strokeWeight: 0, // 枠線なし
     };
-}
 
-// スポット詳細の表示
-function displaySpotDetails(spot) {
-    document.getElementById('spot-name').textContent = spot.name;
-    document.getElementById('spot-description').textContent = spot.description;
-
-    const visitedStatusElement = document.getElementById('visited-status');
-    const recordVisitButton = document.getElementById('record-visit');
-
-    if (spot.type === 'shrine' || spot.type === 'temple') {
-        if (spot.visited) {
-            visitedStatusElement.textContent = '訪問済み';
-            recordVisitButton.style.display = 'none';
-        } else {
-            visitedStatusElement.textContent = '未訪問';
-            recordVisitButton.style.display = 'block';
-            recordVisitButton.onclick = () => recordVisit(spot.id);
-        }
-    } else {
-        // お蕎麦屋さんの場合は訪問ステータスと記録ボタンを非表示
-        visitedStatusElement.textContent = '';
-        recordVisitButton.style.display = 'none';
+    // ここで `type` に基づいて異なるアイコンを返すロジックを実装しますが、
+    // 今回の指示では青い丸をデフォルトとしています。
+    // もし神社/寺/蕎麦で異なるアイコンを使用する場合は、下記を適切に修正してください。
+    // 現時点では、全てのスポットで青い丸を使用するようにしています。
+    if (type === 'shrine') {
+        // 例: iconUrl = 'assets/icon_shrine.png'; return { url: iconUrl, scaledSize: new google.maps.Size(iconSize, iconSize) };
+        return blueDotIcon;
+    } else if (type === 'temple') {
+        // 例: iconUrl = 'assets/icon_temple.png'; return { url: iconUrl, scaledSize: new google.maps.Size(iconSize, iconSize) };
+        return blueDotIcon;
+    } else if (type === 'soba') {
+        // 例: iconUrl = 'assets/icon_soba.png'; return { url: iconUrl, scaledSize: new google.maps.Size(iconSize, iconSize) };
+        return blueDotIcon;
     }
+    return blueDotIcon; // デフォルトとして青い丸を返す
 }
+
 
 // 訪問を記録
 function recordVisit(spotId) {
@@ -169,7 +195,7 @@ function recordVisit(spotId) {
 
         spot.visited = true;
         saveData(currentSpotsData);
-        updateProgress();
+        updateInfoPanel(); // パネルの更新関数を呼び出し
         updateMarkerIcon(spotId, true); // マーカーアイコンを更新
 
         // 訪問後の発見数を取得
@@ -190,30 +216,37 @@ function recordVisit(spotId) {
         // アチーブメントのチェック (ここでは効果音を再生しない)
         checkAchievements();
 
-        // スポット詳細の表示を更新
-        displaySpotDetails(spot);
+        // スポット詳細の表示は、情報ウィンドウが閉じることで消えるため、
+        // 明示的に更新する必要は少なくなりましたが、updateInfoPanelで全体を更新します。
     }
 }
 
 // マーカーアイコンを更新する関数 (opacity を設定)
 function updateMarkerIcon(spotId, visited) {
     const markerIndex = currentSpotsData.findIndex(s => s.id === spotId);
-    if (markerIndex !== -1) {
-        // アイコン自体は変更せず、透明度のみを変更
+    if (markerIndex !== -1 && markers[markerIndex]) { // markers[markerIndex] の存在も確認
         markers[markerIndex].setOpacity(visited ? 0.5 : 1.0);
     }
 }
 
-// 進捗の更新
-function updateProgress() {
+// 進捗の更新 (関数名を updateInfoPanel に変更し、HTMLのIDに合わせる)
+function updateInfoPanel() {
     const totalSpots = currentSpotsData.filter(s => s.type === 'shrine' || s.type === 'temple').length;
     const visitedSpots = currentSpotsData.filter(s => (s.type === 'shrine' || s.type === 'temple') && s.visited).length;
-    const discoveryCount = currentSpotsData.filter(s => s.visited).length; // 訪問済みスポットの総数
+    const foundCount = currentSpotsData.filter(s => s.visited).length; // 訪問済みスポットの総数
 
-    document.getElementById('overall-progress').textContent = `踏破率: ${visitedSpots} / ${totalSpots} 箇所`;
-    document.getElementById('discovery-count').textContent = `発見数: ${discoveryCount} 箇所`;
+    // HTMLのIDに合わせてテキストコンテンツを更新
+    const visitedCountElement = document.getElementById('visited-count');
+    const foundCountElement = document.getElementById('found-count');
 
-    updateAchievementsDisplay();
+    if (visitedCountElement) {
+        visitedCountElement.textContent = visitedSpots;
+    }
+    if (foundCountElement) {
+        foundCountElement.textContent = foundCount;
+    }
+
+    updateAchievementsDisplay(); // アチーブメント表示も更新
 }
 
 // アチーブメントの定義
@@ -229,14 +262,29 @@ function checkAchievements() {
     achievements.forEach(achievement => {
         if (achievement.condition(currentSpotsData)) {
             // まだ付与されていない場合のみ追加
-            if (!currentSpotsData.some(spot => spot.achievements.includes(achievement.id))) {
-                // 実際にはどのスポットに紐付けるかロジックが必要だが、ここでは全スポットのいずれかに付与されると仮定
-                // 簡単のため、最初のスポットに付与することにする
+            // アチーブメントがどのスポットにも紐付いていないかを確認
+            const isAchievementEarnedGlobally = currentSpotsData.some(spot => spot.achievements && spot.achievements.includes(achievement.id));
+
+            if (!isAchievementEarnedGlobally) {
+                // アチーブメントを付与するスポットを見つける
+                // ここでは、最も新しく訪問されたスポット、または単に最初のスポットに紐付けるといったロジックが必要。
+                // 簡単のため、全スポットのいずれかに付与されていなければ、最初のスポットに付与することにする。
                 if (currentSpotsData.length > 0) {
-                    currentSpotsData[0].achievements.push(achievement.id);
-                    saveData(currentSpotsData);
-                    updateAchievementsDisplay();
-                    newAchievementEarned = true; // 新しいアチーブメントを獲得した
+                    // 全てのスポットの achievements 配列をチェックし、もしどのスポットにもこのアチーブメントがなければ追加
+                    let foundSpotToAttach = false;
+                    for (let i = 0; i < currentSpotsData.length; i++) {
+                        if (!currentSpotsData[i].achievements.includes(achievement.id)) {
+                            currentSpotsData[i].achievements.push(achievement.id);
+                            foundSpotToAttach = true;
+                            break; // 最初の見つけたスポットに紐付けたら終了
+                        }
+                    }
+
+                    if (foundSpotToAttach) {
+                        saveData(currentSpotsData);
+                        updateAchievementsDisplay();
+                        newAchievementEarned = true; // 新しいアチーブメントを獲得した
+                    }
                 }
             }
         }
@@ -244,14 +292,19 @@ function checkAchievements() {
     return newAchievementEarned;
 }
 
+
 // アチーブメント表示の更新
 function updateAchievementsDisplay() {
     const achievementsContainer = document.getElementById('achievements');
+    if (!achievementsContainer) return; // コンテナが存在しない場合は何もしない
+
     achievementsContainer.innerHTML = ''; // クリア
 
     const earnedAchievementIds = new Set();
     currentSpotsData.forEach(spot => {
-        spot.achievements.forEach(achId => earnedAchievementIds.add(achId));
+        if (spot.achievements) { // achievementsプロパティが存在するか確認
+            spot.achievements.forEach(achId => earnedAchievementIds.add(achId));
+        }
     });
 
     achievements.forEach(achievement => {
@@ -259,13 +312,20 @@ function updateAchievementsDisplay() {
             const badgeElement = document.createElement('div');
             badgeElement.classList.add('achievement-badge');
             badgeElement.innerHTML = `
-                <img src="assets/${achievement.badge}" alt="${achievement.name}" width="32" height="32">
+                <img src="assets/${achievement.badge}" alt="${achievement.name}">
                 <span>${achievement.name}</span>
             `;
             achievementsContainer.appendChild(badgeElement);
+
+            // バッジ詳細表示のイベントリスナー（後のタスクで追加するが、ここで構造を考慮）
+            badgeElement.addEventListener('click', () => {
+                // ポップアップ表示などのロジックをここに実装
+                console.log(`Clicked on badge: ${achievement.name}`);
+            });
         }
     });
 }
+
 
 // サウンド再生関数
 function playSound(filename) {
@@ -285,7 +345,7 @@ document.getElementById('clear-footsteps').addEventListener('click', () => {
         markers.forEach(marker => marker.setMap(null));
         markers = [];
         addMarkers();
-        updateProgress();
+        updateInfoPanel(); // updateProgress から名称変更
         playSound('se_quest_complete_fanfare.mp3'); // リセット音
     }
 });
@@ -299,7 +359,7 @@ document.getElementById('reset-adventure').addEventListener('click', () => {
         markers.forEach(marker => marker.setMap(null));
         markers = [];
         addMarkers();
-        updateProgress();
+        updateInfoPanel(); // updateProgress から名称変更
         playSound('se_quest_complete_fanfare.mp3'); // リセット音
     }
 });
@@ -322,12 +382,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1秒後にストーリーアニメーションを開始
         setTimeout(() => {
             startStoryAnimation();
-        }, 1000); 
+        }, 1000);
     });
 
-    // スキップボタンのイベントリスナー
-    document.getElementById('skip-button').addEventListener('click', () => {
-        endStoryAnimation();
+    // スキップボタンのイベントリスナー (IDをHTMLに合わせて修正)
+    document.getElementById('story-intro-skip-button').addEventListener('click', () => {
+        endStoryAnimation(); // アニメーションを強制終了
         showScreen('main-game-container');
         // Google Mapsの初期化はメインゲーム画面表示後に行う
         if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
@@ -339,18 +399,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 情報パネルのトグル機能
-    const toggleButton = document.getElementById('toggle-panel-button');
+    const togglePanelButton = document.getElementById('toggle-panel-button'); // 変数名を合わせる
     const infoPanel = document.getElementById('info-panel');
 
-    if (toggleButton && infoPanel) {
-        toggleButton.addEventListener('click', () => {
+    if (togglePanelButton && infoPanel) {
+        togglePanelButton.addEventListener('click', () => {
             infoPanel.classList.toggle('minimized');
             if (infoPanel.classList.contains('minimized')) {
-                toggleButton.textContent = '書を開く';
+                togglePanelButton.textContent = '▲'; // 閉じたら上矢印
             } else {
-                toggleButton.textContent = '書を閉じる';
+                togglePanelButton.textContent = '▼'; // 開いたら下矢印
             }
         });
+    }
+    // 初期状態は開いているので、ボタンは下矢印
+    if (togglePanelButton) {
+        togglePanelButton.textContent = '▼';
     }
 });
 

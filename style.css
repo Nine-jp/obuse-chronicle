@@ -67,7 +67,7 @@ body {
 }
 
 .action-button {
-    margin-top: 40px; /* 2行分のスペースを想定 */
+    margin-top: 40px; /* タイトル下とボタンの間のスペース */
     padding: 15px 30px;
     font-family: 'DotGothic16', sans-serif;
     font-size: 1.2em;
@@ -109,7 +109,7 @@ body {
 #story-text {
     width: 100%;
     opacity: 0; /* Start invisible */
-    transition: opacity 1.5s ease-in-out; /* Smooth fade transition */
+    transition: opacity 1s ease-in-out; /* フェードイン/アウトを1秒に設定 */
     white-space: pre-wrap; /* テキスト内の改行をHTMLで表示する */
 }
 
@@ -122,7 +122,7 @@ body {
 }
 
 /* #story-intro #skip-button の位置は変更なし */
-#story-intro #skip-button {
+#story-intro #story-intro-skip-button { /* IDをHTMLに合わせて修正 */
     position: absolute;
     bottom: 20px;
     right: 20px;
@@ -153,54 +153,96 @@ body {
     padding: 10px 15px;
     box-sizing: border-box;
     width: 100%;
-    height: 25vh;
-    overflow-y: auto;
+    height: 25vh; /* 高さ固定 */
+    overflow-y: auto; /* スクロールは基本的に不要だが、念のためauto */
     box-shadow: 0 -3px 5px rgba(0,0,0,0.2);
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex-direction: column; /* 要素を縦に並べる */
+    justify-content: space-between; /* 要素間に均等なスペースを確保 */
     color: #333; /* Added for readability */
+    /* 以下、トグルボタンとの連携のため追加または調整 */
+    position: absolute; /* マップ上に配置するため */
+    bottom: 0; /* 下部に固定 */
+    left: 0;
+    transition: bottom 0.3s ease; /* スムーズなアニメーション */
+    z-index: 2; /* マップより手前 */
 }
 
+#info-panel.minimized {
+    bottom: -25vh; /* パネルを隠す高さ (heightと同じ) */
+}
+
+#toggle-panel-button {
+    position: absolute;
+    bottom: 25vh; /* パネルの上端に配置 */
+    right: 10px;
+    background-color: #666;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px 5px 0 0; /* 上角を丸める */
+    cursor: pointer;
+    z-index: 3; /* パネルより手前 */
+    transition: bottom 0.3s ease;
+}
+
+#info-panel.minimized + #toggle-panel-button {
+    bottom: 0; /* パネルが隠れたら、ボタンは画面下部に移動 */
+}
+
+/* 情報パネル内の各セクションの調整 */
 #site-title {
     text-align: center;
     color: #333;
     margin-top: 0;
-    font-size: 1.1em;
+    font-size: 1.1em; /* 小さく、しかし読みやすく */
     margin-bottom: 5px;
 }
 
-#spot-details,
 #progress-section {
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px dashed #ccc;
+    display: flex; /* 横並びにするため */
+    justify-content: space-around; /* 均等に配置 */
+    margin-bottom: 5px; /* 余白を調整 */
+    border-bottom: none; /* 下線を削除 */
 }
 
-#spot-details h2,
-#progress-section h3 {
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 5px;
-    font-size: 1.1em;
-}
-
-#spot-details p,
 #progress-section p {
-    margin: 3px 0;
-    font-size: 0.85em;
+    margin: 0;
+    font-size: 0.9em; /* 小さく、しかし読みやすく */
+}
+
+#spot-details {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: none; /* 下線を削除 */
+}
+
+#spot-details h2 {
+    font-size: 1em; /* 適度なサイズ */
+    margin-top: 0;
+    margin-bottom: 3px;
+    text-align: center;
+}
+
+#spot-details p {
+    font-size: 0.85em; /* 簡単な説明のサイズ */
+    margin: 0;
+    text-align: center;
 }
 
 #achievements {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-wrap: wrap; /* バッジが複数行になっても良いように */
+    gap: 5px; /* バッジ間のスペース */
     justify-content: center;
-    margin-top: 10px;
+    margin-top: 5px;
+    flex-grow: 1; /* 残りのスペースを埋めるように伸びる */
+    overflow-y: auto; /* バッジが多くなったらスクロール */
+    max-height: 60px; /* バッジエリアの最大高さ */
 }
 
 .achievement-badge {
-    width: 80px;
+    width: 60px; /* バッジアイコンのサイズを小さく */
     height: auto;
     background-color: #eee;
     border: 1px solid #ddd;
@@ -208,36 +250,50 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 9px; /* バッジ名のフォントサイズ */
     text-align: center;
     color: #666;
-    padding: 5px;
+    padding: 3px;
     box-sizing: border-box;
 }
 
 .achievement-badge img {
+    width: 30px; /* 画像のサイズ */
+    height: 30px;
     vertical-align: middle;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
 }
 
 #action-buttons {
     border-bottom: none;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-around; /* ボタンを左右に分離 */
     align-items: center;
-    margin-top: auto;
+    margin-top: 5px;
     padding-top: 5px;
 }
 
 button {
-    padding: 8px 12px;
-    font-size: 0.85em;
+    padding: 6px 10px; /* ボタンのパディングを調整 */
+    font-size: 0.8em; /* ボタンのフォントサイズを調整 */
     border: none;
     border-radius: 4px;
     cursor: pointer;
     color: white;
-    min-width: 80px; /* ボタンが小さくなりすぎないように */
+    min-width: 70px; /* ボタンが小さくなりすぎないように */
 }
+
+/* #record-visit は情報ウィンドウ用のため、ここにはスタイルを記載しません */
+/* 古い #record-visit スタイルは削除します */
+/* #record-visit {
+    background-color: #008CBA;
+    margin-top: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+#record-visit:active {
+    background-color: #007bb5;
+} */
 
 #clear-footsteps {
     background-color: #4CAF50; /* 緑系 */
@@ -253,15 +309,6 @@ button {
     background-color: #da190b;
 }
 
-#record-visit {
-    background-color: #008CBA; /* 青系など、目立つ色に */
-    margin-top: 5px;
-    width: 100%;
-    box-sizing: border-box;
-}
-#record-visit:active {
-    background-color: #007bb5;
-}
 
 /* マップ上の情報ウィンドウのスタイル */
 .gm-style .gm-iw-c {
@@ -314,7 +361,7 @@ button {
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 40vh; /* 情報パネルの高さ */
+        height: 35vh; /* スマホでの情報パネルの高さ調整 */
         padding: 10px;
         transition: bottom 0.3s ease; /* スムーズなアニメーション */
         z-index: 2; /* マップより手前 */
@@ -322,12 +369,12 @@ button {
     }
 
     #info-panel.minimized {
-        bottom: -40vh; /* 画面外に隠す */
+        bottom: -35vh; /* 画面外に隠す */
     }
 
     #toggle-panel-button {
         position: absolute;
-        bottom: 40vh; /* パネルの上端に配置 */
+        bottom: 35vh; /* パネルの上端に配置 */
         right: 10px;
         background-color: #666;
         color: white;
@@ -348,19 +395,31 @@ button {
         margin-top: 0;
     }
 
-    #spot-details h2,
-    #progress-section h3 {
-        font-size: 1em;
+    #progress-section p {
+        font-size: 0.85em;
     }
 
-    #spot-details p,
-    #progress-section p {
+    #spot-details h2 {
+        font-size: 0.9em;
+    }
+
+    #spot-details p {
         font-size: 0.8em;
+    }
+
+    .achievement-badge {
+        width: 55px; /* 小さな画面でのバッジサイズ */
+        font-size: 8px;
+    }
+    .achievement-badge img {
+        width: 25px;
+        height: 25px;
     }
 
     button {
-        padding: 6px 10px;
-        font-size: 0.8em;
+        padding: 5px 8px;
+        font-size: 0.75em;
+        min-width: 60px;
     }
 
     .story-text-container {
@@ -370,16 +429,28 @@ button {
 
 @media (max-width: 480px) {
     #info-panel {
-        padding: 8px;
+        height: 40vh; /* さらに小さなスマホでの情報パネルの高さ調整 */
+    }
+
+    #info-panel.minimized {
+        bottom: -40vh;
+    }
+
+    #toggle-panel-button {
+        bottom: 40vh;
     }
 
     #site-title {
         font-size: 0.9em;
     }
 
+    #progress-section p {
+        font-size: 0.8em;
+    }
+
     #spot-details h2,
-    #progress-section h3 {
-        font-size: 0.9em;
+    #progress-section h3 { /* progress-section h3 はhtmlにないので削除してもよい */
+        font-size: 0.8em;
     }
 
     #spot-details p,
@@ -387,9 +458,19 @@ button {
         font-size: 0.75em;
     }
 
+    .achievement-badge {
+        width: 50px; /* さらに小さな画面でのバッジサイズ */
+        font-size: 7px;
+    }
+    .achievement-badge img {
+        width: 20px;
+        height: 20px;
+    }
+
     button {
-        font-size: 0.75em;
-        padding: 5px 8px;
+        font-size: 0.7em;
+        padding: 4px 6px;
+        min-width: 50px;
     }
 
     .story-text-container {

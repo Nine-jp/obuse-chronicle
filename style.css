@@ -23,7 +23,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* 修正: コンテンツを垂直方向中央寄せ、微調整はpadding-topで */
     justify-content: center;
+    /* 修正: 中央よりちょい上にするためのpadding-topを追加（例: 画面の5%分） */
+    padding-top: 5vh; /* ★追加・調整: タイトル全体を中央より少し上に */
     background-color: #000;
     color: #fff;
     opacity: 0;
@@ -41,9 +44,8 @@ body {
 /* Splash Screen */
 #splash-screen {
     text-align: center;
-    /* 以下を変更または追加 */
-    justify-content: flex-end; /* ★変更: コンテンツを垂直方向に下寄せ */
-    padding-bottom: 15vh; /* ★追加: 画面下部からボタンまでの余白 (例: 画面の15%分) */
+    /* padding-bottomはここで削除または0にして、justify-contentをcenterに */
+    padding-bottom: 0; /* ★修正: ここでpadding-bottomをリセット */
 }
 
 /* 修正されたタイトルスタイル: グラデーションを適用 */
@@ -68,8 +70,8 @@ body {
 .game-title-line2 {
     font-size: 2.5em; /* 必要に応じて調整 */
     line-height: 1;
-    margin-bottom: 40px; /* タイトルとボタンの間に空白を作成 */
-    margin-top: 0.8em; /* ★追加: Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
+    margin-bottom: 20px; /* ★調整: タイトルとボタンの間の空白を狭める */
+    margin-top: 0.8em; /* ★調整: Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
 }
 
 .action-button {
@@ -336,7 +338,8 @@ button {
     }
     .game-title-line2 {
         font-size: 1.8em; /* スマホでの「Dawn of the Pilgrim」のフォントサイズ */
-        margin-bottom: 30px; /* ★追加: スマホでのタイトルとボタンの間隔も調整 */
+        margin-bottom: 30px; /* ★調整: スマホでのタイトルとボタンの間隔も調整 */
+        margin-top: 0.8em; /* ★調整: Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
     }
 
     #info-panel {
@@ -401,7 +404,8 @@ button {
     }
     .game-title-line2 {
         font-size: 1.5em; /* より小さいスマホ画面での「Dawn of the Pilgrim」のフォントサイズ */
-        margin-bottom: 25px; /* ★追加: より小さいスマホでのタイトルとボタンの間隔も調整 */
+        margin-bottom: 25px; /* ★調整: より小さいスマホでのタイトルとボタンの間隔も調整 */
+        margin-top: 0.8em; /* ★調整: Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
     }
 
     #info-panel {

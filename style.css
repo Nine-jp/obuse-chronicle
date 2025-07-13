@@ -41,6 +41,9 @@ body {
 /* Splash Screen */
 #splash-screen {
     text-align: center;
+    /* 以下を変更または追加 */
+    justify-content: flex-end; /* ★変更: コンテンツを垂直方向に下寄せ */
+    padding-bottom: 15vh; /* ★追加: 画面下部からボタンまでの余白 (例: 画面の15%分) */
 }
 
 /* 修正されたタイトルスタイル: グラデーションを適用 */
@@ -65,7 +68,8 @@ body {
 .game-title-line2 {
     font-size: 2.5em; /* 必要に応じて調整 */
     line-height: 1;
-    margin-bottom: 40px; /* ★追加: タイトルとボタンの間に空白を作成 */
+    margin-bottom: 40px; /* タイトルとボタンの間に空白を作成 */
+    margin-top: 0.8em; /* ★追加: Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
 }
 
 .action-button {

@@ -44,8 +44,9 @@ body {
 /* Splash Screen */
 #splash-screen {
     text-align: center;
-    /* padding-bottomはここで削除または0にして、justify-contentをcenterに */
-    padding-bottom: 0; /* ★修正: ここでpadding-bottomをリセット */
+    justify-content: center; /* 垂直方向中央寄せは維持 */
+    padding-top: 0; /* ★修正: padding-topを0に戻す */
+    padding-bottom: 25vh; /* ★追加・調整: 画面下部からの余白を増やし、ボタンを下半分中央へ寄せる (例: 画面の25%分) */
 }
 
 /* 修正されたタイトルスタイル: グラデーションを適用 */

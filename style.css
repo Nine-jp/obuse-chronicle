@@ -15,43 +15,32 @@ body {
 
 /* General screen styles */
 .screen {
-    position: relative;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    display: grid; /* ★変更: flexからgridへ */
-    /* ★調整: 上余白, タイトル, 中間スペース(タイトルとボタンの間), ボタン, 下余白 */
-    grid-template-rows: 1fr auto 2fr auto 1fr; /* ★この比率で上下、およびタイトルとボタンの間隔を調整します */
-    align-items: center; /* グリッドアイテムを垂直方向中央に揃える */
-    justify-items: center; /* グリッドアイテムを水平方向中央に揃える */
-    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     background-color: #000;
     color: #fff;
     opacity: 0;
     visibility: hidden;
     transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
-    z-index: 1000;
+    z-index: 1000; /* Ensure screens are on top */
 }
 
 .screen.active {
     opacity: 1;
     visibility: visible;
-    z-index: 1000;
+    z-index: 1000; /* Ensure active screen is on top */
 }
 
 /* Splash Screen */
 #splash-screen {
     text-align: center;
-    /* #splash-screen固有のgrid設定は.screenに集約されたため、ここでは削除またはコメントアウト */
-    /* 必要であれば、ここに個別のスタイルを追加 */
-}
-
-/* タイトルグループのスタイル */
-.title-group {
-    grid-row: 2; /* ★変更: 2番目の行に配置 */
-    margin: 0; /* 不要なマージンをリセット */
-    padding: 0; /* 不要なパディングをリセット */
 }
 
 /* 修正されたタイトルスタイル: グラデーションを適用 */
@@ -76,15 +65,7 @@ body {
 .game-title-line2 {
     font-size: 2.5em; /* 必要に応じて調整 */
     line-height: 1;
-    margin-top: 0.8em; /* Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
-    margin-bottom: 0; /* ★修正: グリッドで制御するため0 */
-}
-
-/* ボタングループのスタイル */
-.button-group {
-    grid-row: 4; /* ★変更: 4番目の行に配置 */
-    margin: 0; /* 不要なマージンをリセット */
-    padding: 0; /* 不要なパディングをリセット */
+    margin-bottom: 40px; /* ★追加: タイトルとボタンの間に空白を作成 */
 }
 
 .action-button {
@@ -97,7 +78,6 @@ body {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    /* position: absolute;関連のスタイルは全て削除 */
 }
 
 .action-button:hover {
@@ -346,25 +326,13 @@ button {
 
 /* レスポンシブデザインの調整 */
 @media (max-width: 768px) {
-    .screen, #splash-screen {
-        grid-template-rows: 0.8fr auto 2fr auto 1.2fr; /* スマホ向け調整例 */
-    }
     /* スマホ画面でのフォントサイズ調整 */
     .game-title-line1 {
         font-size: 2.5em; /* スマホでの「Obuse Chronicle:」のフォントサイズ */
     }
     .game-title-line2 {
         font-size: 1.8em; /* スマホでの「Dawn of the Pilgrim」のフォントサイズ */
-        margin-bottom: 0; /* グリッドで制御するため0 */
-        margin-top: 0.8em; /* Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
-    }
-
-    /* .title-group および .button-group の個別のマージンは原則不要になる */
-    .title-group {
-        margin-top: 0; /* リセット */
-    }
-    .button-group {
-        margin-bottom: 0; /* リセット */
+        margin-bottom: 30px; /* ★追加: スマホでのタイトルとボタンの間隔も調整 */
     }
 
     #info-panel {
@@ -423,25 +391,13 @@ button {
 }
 
 @media (max-width: 480px) {
-    .screen, #splash-screen {
-        grid-template-rows: 0.7fr auto 2fr auto 1.3fr; /* さらに小さいスマホ向け調整例 */
-    }
     /* より小さいスマホ画面でのフォントサイズ調整 */
     .game-title-line1 {
         font-size: 2em; /* より小さいスマホ画面での「Obuse Chronicle:」のフォントサイズ */
     }
     .game-title-line2 {
         font-size: 1.5em; /* より小さいスマホ画面での「Dawn of the Pilgrim」のフォントサイズ */
-        margin-bottom: 0; /* グリッドで制御するため0 */
-        margin-top: 0.8em; /* Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
-    }
-
-    /* .title-group および .button-group の個別のマージンは原則不要になる */
-    .title-group {
-        margin-top: 0; /* リセット */
-    }
-    .button-group {
-        margin-bottom: 0; /* リセット */
+        margin-bottom: 25px; /* ★追加: より小さいスマホでのタイトルとボタンの間隔も調整 */
     }
 
     #info-panel {

@@ -15,17 +15,16 @@ body {
 
 /* General screen styles */
 .screen {
-    position: relative; /* ★追加: 子要素のabsolute配置の基準にする */
+    position: relative; /* 子要素のabsolute配置の基準にする */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; /* タイトルは中央維持 */
-    padding-top: 0; /* 調整のため0にリセット */
-    padding-bottom: 0; /* 調整のため0にリセット */
+    flex-direction: column; /* 垂直方向の配置 */
+    align-items: center; /* 水平方向の中央揃え */
+    justify-content: space-around; /* ★変更: コンテンツを垂直方向に均等に配置 */
+    padding: 0; /* paddingをリセット */
     background-color: #000;
     color: #fff;
     opacity: 0;
@@ -43,6 +42,18 @@ body {
 /* Splash Screen */
 #splash-screen {
     text-align: center;
+    /* #splash-screen自体もflexコンテナとして設定し、内部のtitle-groupとbutton-groupを配置 */
+    display: flex; /* ★追加: #splash-screenもflexコンテナにする */
+    flex-direction: column; /* ★追加: #splash-screenも垂直方向のflexにする */
+    justify-content: space-around; /* ★追加: #splash-screen内でもコンテンツを均等配置 */
+    align-items: center; /* ★追加: #splash-screen内での水平中央揃え */
+    padding: 0; /* paddingをリセット */
+}
+
+/* タイトルグループのスタイル */
+.title-group {
+    /* 必要であれば、ここにマージンなどを追加して、タイトル全体の位置を微調整 */
+    margin-top: -5vh; /* ★調整: タイトルグループ全体を少し上にずらす（例） */
 }
 
 /* 修正されたタイトルスタイル: グラデーションを適用 */
@@ -67,8 +78,15 @@ body {
 .game-title-line2 {
     font-size: 2.5em; /* 必要に応じて調整 */
     line-height: 1;
-    margin-bottom: 0; /* ★修正: ボタンをabsolute配置するため、この余白は不要に */
+    margin-bottom: 0; /* ボタンとの間の余白は不要 */
     margin-top: 0.8em; /* Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
+}
+
+/* ボタングループのスタイル */
+.button-group {
+    /* 必要であれば、ここにマージンなどを追加して、ボタン全体の位置を微調整 */
+    /* 例えば、flex-endになったときに下からどれくらい離すか */
+    margin-bottom: 5vh; /* ★調整: ボタングループ全体を少し上にずらす（例） */
 }
 
 .action-button {
@@ -81,12 +99,7 @@ body {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-
-    /* ★追加: 絶対位置指定 */
-    position: absolute;
-    bottom: 15vh; /* 画面下部から15%の高さに配置（調整可能） */
-    left: 50%; /* 親要素の水平中央に移動 */
-    transform: translateX(-50%); /* 中央揃えのための微調整 */
+    /* position: absolute;関連のスタイルは全て削除 */
 }
 
 .action-button:hover {
@@ -345,9 +358,14 @@ button {
         margin-top: 0.8em; /* Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
     }
 
-    /* .action-button の bottom 値は、このメディアクエリ内でも調整可能 */
-    .action-button {
-        bottom: 10vh; /* スマホでのボタン位置を少し上げる (例: 10vh) */
+    /* .title-group の調整 */
+    .title-group {
+        margin-top: -5vh; /* スマホでもタイトルグループ全体を少し上に */
+    }
+
+    /* .button-group の調整 */
+    .button-group {
+        margin-bottom: 5vh; /* スマホでもボタングループ全体を少し上に */
     }
 
     #info-panel {
@@ -416,9 +434,14 @@ button {
         margin-top: 0.8em; /* Obuse Chronicle: と Dawn of the Pilgrim の間にスペース */
     }
 
-    /* .action-button の bottom 値は、このメディアクエリ内でも調整可能 */
-    .action-button {
-        bottom: 8vh; /* より小さいスマホでのボタン位置をさらに上げる (例: 8vh) */
+    /* .title-group の調整 */
+    .title-group {
+        margin-top: -5vh; /* より小さいスマホでもタイトルグループ全体を少し上に */
+    }
+
+    /* .button-group の調整 */
+    .button-group {
+        margin-bottom: 5vh; /* より小さいスマホでもボタングループ全体を少し上に */
     }
 
     #info-panel {

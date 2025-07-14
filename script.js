@@ -4,7 +4,7 @@ let infoWindow;
 let currentInfoWindow = null; // 現在開いている情報ウィンドウを追跡
 
 // ストーリーテキストの定義
-const storyText = "古の書物が語る。\nこの地には、いとしい記憶が眠る。\nさあ、巡礼の旅へ。";
+const storyText = "古の書物が語る。\nこの地には、深い記憶が眠る。\nさあ、巡礼の旅へ。";
 
 // ローカルストレージからデータをロードする関数
 function loadData() {
@@ -315,7 +315,7 @@ function showScreen(screenId) {
 // Google Maps APIのスクリプトを動的に読み込む
 function loadGoogleMapsScript() {
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${Maps_API_KEY}&callback=initMap`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);

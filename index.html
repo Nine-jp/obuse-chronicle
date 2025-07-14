@@ -58,8 +58,13 @@
         <button id="toggle-panel-button">書を閉じる</button>
     </div>
 
-    <script async defer src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
+    <!-- APIキーを定義するファイルを最初に読み込む -->
+    <script src="api-key-local.js"></script>
+    <!-- データファイルを読み込む -->
     <script src="data.js"></script>
+    <!-- メインのスクリプトファイルを読み込む -->
     <script src="script.js"></script>
+    <!-- Google Maps APIのスクリプトはscript.js内で動的に読み込むため、ここからは削除 -->
+    <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script> -->
 </body>
 </html>

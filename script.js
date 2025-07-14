@@ -1,12 +1,10 @@
-const GOOGLE_MAPS_API_KEY = "AIzaSyAy8Z-koUIq221qgyAmyW8W3Wn2ZZT0KEk"; // TODO: このAPIキーは、コミットしない別のファイルに移動するか、環境変数として設定してください。
-
 let map;
 let markers = [];
 let infoWindow;
 let currentInfoWindow = null; // 現在開いている情報ウィンドウを追跡
 
 // ストーリーテキストの定義
-const storyText = "古の書物が語る。\nこの地には、いとしい記憶が眠る。\nさあ、巡礼の旅へ。";
+const storyText = "古の書物が語る。\nこの地には、深い記憶が眠る。\nさあ、巡礼の旅へ。";
 
 // ローカルストレージからデータをロードする関数
 function loadData() {
@@ -121,7 +119,7 @@ function getMarkerIcon(type) {
 
     // 画面幅が768px以下の場合、アイコンサイズを調整
     if (window.innerWidth <= 768) {
-        iconSize = 40; 
+        iconSize = 40;
     }
 
     if (type === 'shrine') {
@@ -293,104 +291,4 @@ document.getElementById('clear-footsteps').addEventListener('click', () => {
 });
 
 // 冒険をリセットボタンのイベントリスナー
-document.getElementById('reset-adventure').addEventListener('click', () => {
-    if (confirm('本当に冒険をリセットしますか？（全てのデータが初期状態に戻ります）')) {
-        localStorage.removeItem('spotsData'); // ローカルストレージからデータを削除
-        currentSpotsData = loadData(); // 初期データを再ロード
-        // マーカーを全て削除して再追加することでアイコンをリセット
-        markers.forEach(marker => marker.setMap(null));
-        markers = [];
-        addMarkers();
-        updateProgress();
-        playSound('se_quest_complete_fanfare.mp3'); // リセット音
-    }
-});
-
-// 画面表示を制御する関数
-function showScreen(screenId) {
-    document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.remove('active');
-    });
-    document.getElementById(screenId).classList.add('active');
-}
-
-// Google Maps APIのスクリプトを動的に読み込む
-function loadGoogleMapsScript() {
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-}
-
-// ゲーム開始時の処理
-document.addEventListener('DOMContentLoaded', () => {
-    showScreen('splash-screen');
-
-    // スタートボタンのイベントリスナー
-    document.getElementById('start-button').addEventListener('click', () => {
-        showScreen('story-intro');
-        // 1秒後にストーリーアニメーションを開始
-        setTimeout(() => {
-            startStoryAnimation();
-        }, 1000); 
-    });
-
-    // スキップボタンのイベントリスナー
-    document.getElementById('skip-button').addEventListener('click', () => {
-        endStoryAnimation();
-        showScreen('main-game-container');
-        // Google Mapsの初期化はメインゲーム画面表示後に行う
-        loadGoogleMapsScript();
-    });
-
-    // 情報パネルのトグル機能
-    const toggleButton = document.getElementById('toggle-panel-button');
-    const infoPanel = document.getElementById('info-panel');
-
-    if (toggleButton && infoPanel) {
-        toggleButton.addEventListener('click', () => {
-            infoPanel.classList.toggle('minimized');
-            if (infoPanel.classList.contains('minimized')) {
-                toggleButton.textContent = '書を開く';
-            } else {
-                toggleButton.textContent = '書を閉じる';
-            }
-        });
-    }
-});
-
-// ストーリーアニメーションを開始する関数
-function startStoryAnimation() {
-    const storyTextElement = document.getElementById('story-text');
-    storyTextElement.textContent = storyText;
-
-    // フェードイン
-    storyTextElement.classList.remove('fade-out');
-    storyTextElement.classList.add('fade-in');
-
-    // 4.5秒表示後、フェードアウト開始 (フェードイン1.5秒 + 表示3秒)
-    storyAnimationTimeoutId = setTimeout(() => {
-        storyTextElement.classList.remove('fade-in');
-        storyTextElement.classList.add('fade-out');
-
-        // フェードアウト完了後、メインゲーム画面へ遷移
-        storyAnimationTimeoutId = setTimeout(() => {
-            showScreen('main-game-container');
-            loadGoogleMapsScript();
-        }, 500); // CSSのtransition時間(0.5s)に合わせる
-    }, 4500); // 4.5秒後 (フェードイン1.5秒 + 表示3秒)
-}
-
-// ストーリーアニメーションを終了する関数
-function endStoryAnimation() {
-    const storyTextElement = document.getElementById('story-text');
-    clearTimeout(storyAnimationTimeoutId); // 進行中のアニメーションタイマーをクリア
-    storyTextElement.classList.remove('fade-in', 'fade-out'); // クラスをリセット
-    showScreen('main-game-container');
-    if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
-        initMap();
-    } else {
-        window.initMap = initMap;
-    }
-}
+document.getElementById('reset-adventure').

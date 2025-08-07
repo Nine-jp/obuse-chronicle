@@ -390,36 +390,33 @@ button {
     }
 }
 
-@media (max-width: 480px) {
-    /* より小さいスマホ画面でのフォントサイズ調整 */
-    .game-title-line1 {
-        font-size: 2em; /* より小さいスマホ画面での「Obuse Chronicle:」のフォントサイズ */
-    }
-    .game-title-line2 {
-        font-size: 1.5em; /* より小さいスマホ画面での「Dawn of the Pilgrim」のフォントサイズ */
-        margin-bottom: 25px; /* ★追加: より小さいスマホでのタイトルとボタンの間隔も調整 */
-    }
+/* 既存のスタイルシートの最後に以下を追加 */
+#map-container {
+    position: relative; /* 子要素の絶対配置の基準とする */
+}
 
-    #info-panel {
-        padding: 8px;
-    }
+#current-location-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 50%; /* 円形にする */
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    z-index: 10; /* マップ上の他の要素より手前に表示 */
+}
 
-    #site-title {
-        font-size: 0.9em;
-    }
+#current-location-button:hover {
+    background-color: #f0f0f0;
+}
 
-    #spot-details h2,
-    #progress-section h3 {
-        font-size: 0.9em;
-    }
-
-    #spot-details p,
-    #progress-section p {
-        font-size: 0.75em;
-    }
-
-    button {
-        font-size: 0.75em;
-        padding: 5px 8px;
-    }
+#current-location-button img {
+    width: 24px;
+    height: 24px;
 }

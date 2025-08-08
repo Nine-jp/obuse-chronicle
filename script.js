@@ -4,7 +4,7 @@ let infoWindow;
 let currentInfoWindow = null; // 現在開いている情報ウィンドウを追跡
 
 // ストーリーテキストの定義
-const storyText = "古の書物が語る。\nこの地には、深い記憶が眠る。\nさあ、巡礼の旅へ。";
+const storyText = "古の書物が語る。<br>この地には、深い記憶が眠る。<br>さあ、巡礼の旅へ。";
 
 // ローカルストレージからデータをロードする関数
 function loadData() {
@@ -173,7 +173,7 @@ function displaySpotDetails(spot) {
     if (spot.type === 'shrine' || spot.type === 'temple') {
         spotActions.style.display = 'flex';
         if (spot.visited) {
-            visitedStatusElement.textContent = '訪問済み';
+            visitedStatusElement.textContent = '記憶済';
             visitedStatusElement.style.display = 'block';
             visitedStatusElement.classList.add('visited');
             recordVisitButton.style.display = 'none';
@@ -406,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ストーリーアニメーションを開始する関数
 function startStoryAnimation() {
     const storyTextElement = document.getElementById('story-text');
-    storyTextElement.textContent = storyText;
+    storyTextElement.innerHTML = storyText;
 
     // フェードイン
     storyTextElement.classList.remove('fade-out');

@@ -133,7 +133,7 @@ body {
     align-items: center; /* Center text vertically */
     justify-content: center; /* Center text horizontally */
     font-family: 'DotGothic16', sans-serif;
-    font-size: 1.5em;
+    font-size: 1.3em; /* フォントサイズを少し小さく */
     color: #fff;
     line-height: 1.8;
     text-align: center; /* Ensure text is centered */

@@ -385,9 +385,7 @@ button {
 }
 
 #visited-status {
-    background-color: #e9ecef;
-    color: #495057;
-    border: 1px solid #ced4da;
+    display: none; /* デフォルトで非表示 */
 }
 
 #visited-status.visited {

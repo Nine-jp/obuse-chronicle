@@ -180,6 +180,7 @@ function displaySpotDetails(spot) {
         } else {
             visitedStatusElement.textContent = '';
             visitedStatusElement.style.display = 'none';
+            visitedStatusElement.classList.remove('visited');
             recordVisitButton.style.display = 'block';
             recordVisitButton.onclick = () => recordVisit(spot.id);
         }

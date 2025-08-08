@@ -168,20 +168,22 @@ function displaySpotDetails(spot) {
 
     const visitedStatusElement = document.getElementById('visited-status');
     const recordVisitButton = document.getElementById('record-visit');
+    const spotActions = document.getElementById('spot-actions');
 
     if (spot.type === 'shrine' || spot.type === 'temple') {
+        spotActions.style.display = 'flex';
         if (spot.visited) {
             visitedStatusElement.textContent = '訪問済み';
+            visitedStatusElement.classList.add('visited');
             recordVisitButton.style.display = 'none';
         } else {
             visitedStatusElement.textContent = '未訪問';
+            visitedStatusElement.classList.remove('visited');
             recordVisitButton.style.display = 'block';
             recordVisitButton.onclick = () => recordVisit(spot.id);
         }
     } else {
-        // お蕎麦屋さんの場合は訪問ステータスと記録ボタンを非表示
-        visitedStatusElement.textContent = '';
-        recordVisitButton.style.display = 'none';
+        spotActions.style.display = 'none';
     }
 }
 
@@ -233,10 +235,7 @@ function updateMarkerIcon(spotId, visited) {
 function updateProgress() {
     const totalSpots = currentSpotsData.filter(s => s.type === 'shrine' || s.type === 'temple').length;
     const visitedSpots = currentSpotsData.filter(s => (s.type === 'shrine' || s.type === 'temple') && s.visited).length;
-    const discoveryCount = currentSpotsData.filter(s => s.visited).length; // 訪問済みスポットの総数
-
     document.getElementById('overall-progress').textContent = `踏破率: ${visitedSpots} / ${totalSpots} 箇所`;
-    document.getElementById('discovery-count').textContent = `発見数: ${discoveryCount} 箇所`;
 
     updateAchievementsDisplay();
 }

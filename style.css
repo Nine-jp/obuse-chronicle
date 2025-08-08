@@ -369,6 +369,32 @@ button {
     border-radius: 5px;
 }
 
+#spot-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#visited-status,
+#record-visit {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 4px;
+}
+
+#visited-status {
+    background-color: #e9ecef;
+    color: #495057;
+    border: 1px solid #ced4da;
+}
+
+#visited-status.visited {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
 /* レスポンシブデザインの調整 */
 @media (max-width: 768px) {
     /* スマホ画面でのフォントサイズ調整 */

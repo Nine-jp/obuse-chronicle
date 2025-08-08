@@ -52,10 +52,16 @@ async function initMap() {
                     lng: position.coords.longitude,
                 };
 
+                const protagonistIcon = document.createElement('img');
+                protagonistIcon.src = 'assets/icon_protagonist.png';
+                protagonistIcon.width = 40; // 主人公アイコンのサイズを40に設定
+                protagonistIcon.height = 40;
+
                 new AdvancedMarkerElement({
                     position: pos,
                     map: map,
                     title: "現在地",
+                    content: protagonistIcon, // 主人公のアイコンを設定
                 });
 
                 map.setCenter(pos);

@@ -29,14 +29,16 @@ function saveData(data) {
 let currentSpotsData = loadData();
 
 // Google Mapの初期化
-function initMap() {
+async function initMap() {
+    const { Map } = await google.maps.importLibrary("maps");
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
     const obuse = { lat: 36.695, lng: 138.318 }; // 小布施町の中心
-    map = new google.maps.Map(document.getElementById('map'), {
+    map = new Map(document.getElementById('map'), {
         center: obuse,
         zoom: 14,
-        mapTypeControl: false, // マップタイプコントロールを非表示
-        streetViewControl: false, // ストリートビューコントロールを非表示
-        fullscreenControl: false // フルスクリーンコントロールを非表示
+        mapId: "OBSE_CHRONICLE_MAP",
+        disableDefaultUI: true // すべてのデフォルトUIコントロールを非表示
     });
 
     infoWindow = new google.maps.InfoWindow();
@@ -50,17 +52,10 @@ function initMap() {
                     lng: position.coords.longitude,
                 };
 
-                new google.maps.Marker({
+                new AdvancedMarkerElement({
                     position: pos,
                     map: map,
                     title: "現在地",
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 7,
-                        fillColor: "#4285F4",
-                        fillOpacity: 1,
-                        strokeWeight: 0,
-                    },
                 });
 
                 map.setCenter(pos);
@@ -74,7 +69,7 @@ function initMap() {
         handleLocationError(false, infoWindow, map.getCenter());
     }
 
-    addMarkers();
+    addMarkers(AdvancedMarkerElement);
     updateProgress();
 
     // 現在地ボタンのイベントリスナー
@@ -111,15 +106,17 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
 }
 
 // マーカーの追加
-function addMarkers() {
+function addMarkers(AdvancedMarkerElement) {
     currentSpotsData.forEach((spot, index) => {
-        const marker = new google.maps.Marker({
+        const icon = getMarkerIcon(spot.type);
+        const marker = new AdvancedMarkerElement({
             position: { lat: spot.latitude, lng: spot.longitude },
             map: map,
             title: spot.name,
-            icon: getMarkerIcon(spot.type), // visited パラメータを削除
-            opacity: spot.visited ? 0.5 : 1.0 // 訪問済みの場合、半透明にする
+            content: icon,
         });
+
+        marker.content.style.opacity = spot.visited ? 0.5 : 1.0;
 
         marker.addListener('click', () => {
             // 既に開いている情報ウィンドウがあれば閉じる
@@ -152,10 +149,11 @@ function getMarkerIcon(type) {
         iconUrl = iconBase + 'icon_soba.png'; // お蕎麦屋さんは訪問済みアイコンなし
     }
 
-    return {
-        url: iconUrl,
-        scaledSize: new google.maps.Size(iconSize, iconSize) // アイコンのサイズ
-    };
+    const icon = document.createElement('img');
+    icon.src = iconUrl;
+    icon.width = iconSize;
+    icon.height = iconSize;
+    return icon;
 }
 
 // スポット詳細の表示
@@ -222,7 +220,7 @@ function updateMarkerIcon(spotId, visited) {
     const markerIndex = currentSpotsData.findIndex(s => s.id === spotId);
     if (markerIndex !== -1) {
         // アイコン自体は変更せず、透明度のみを変更
-        markers[markerIndex].setOpacity(visited ? 0.5 : 1.0);
+        markers[markerIndex].content.style.opacity = visited ? 0.5 : 1.0;
     }
 }
 
@@ -306,7 +304,7 @@ document.getElementById('clear-footsteps').addEventListener('click', () => {
         // マーカーを全て削除して再追加することでアイコンをリセット
         markers.forEach(marker => marker.setMap(null));
         markers = [];
-        addMarkers();
+        addMarkers(google.maps.marker.AdvancedMarkerElement);
         updateProgress();
         playSound('se_quest_complete_fanfare.mp3'); // リセット音
     }
@@ -320,7 +318,7 @@ document.getElementById('reset-adventure').addEventListener('click', () => {
         // マーカーを全て削除して再追加することでアイコンをリセット
         markers.forEach(marker => marker.setMap(null));
         markers = [];
-        addMarkers();
+        addMarkers(google.maps.marker.AdvancedMarkerElement);
         updateProgress();
         playSound('se_quest_complete_fanfare.mp3'); // リセット音
     }
@@ -337,7 +335,7 @@ function showScreen(screenId) {
 // Google Maps APIのスクリプトを動的に読み込む
 function loadGoogleMapsScript() {
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap&loading=async&libraries=marker`;
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);
@@ -414,3 +412,15 @@ function endStoryAnimation() {
         window.initMap = initMap;
     }
 }
+
+// 画面サイズが変更されたときにマーカーアイコンを更新
+window.addEventListener('resize', () => {
+    // マップが初期化されている場合のみ実行
+    if (map) {
+        markers.forEach((marker, index) => {
+            const spot = currentSpotsData[index];
+            const icon = getMarkerIcon(spot.type);
+            marker.content = icon;
+        });
+    }
+});

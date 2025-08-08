@@ -104,8 +104,8 @@ async function initMap() {
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
     const contentString = browserHasGeolocation
-        ? `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; color: black; height: 50px; text-align: center;"><span style="color: red;">⚠️ エラー ⚠️</span><br>位置情報サービスに失敗しました。</div>`
-        : `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; color: black; height: 50px; text-align: center;"><span style="color: red;">⚠️ エラー ⚠️</span><br>お使いのブラウザは位置情報に対応していません。</div>`;
+        ? `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; color: black; height: 50px; text-align: center; line-height: 1;"><span style="color: red;">⚠️ エラー ⚠️</span><br>位置情報サービスに失敗しました。</div>`
+        : `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; color: black; height: 50px; text-align: center; line-height: 1;"><span style="color: red;">⚠️ エラー ⚠️</span><br>お使いのブラウザは位置情報に対応していません。</div>`;
     infoWindow.setContent(contentString);
     infoWindow.open(map);
 }
@@ -271,8 +271,8 @@ function checkAchievements() {
 
 // アチーブメント表示の更新
 function updateAchievementsDisplay() {
-    const achievementsContainer = document.getElementById('achievements');
-    achievementsContainer.innerHTML = ''; // クリア
+    const badgeGrid = document.getElementById('badge-popup-grid');
+    badgeGrid.innerHTML = ''; // クリア
 
     const earnedAchievementIds = new Set();
     currentSpotsData.forEach(spot => {
@@ -284,10 +284,10 @@ function updateAchievementsDisplay() {
             const badgeElement = document.createElement('div');
             badgeElement.classList.add('achievement-badge');
             badgeElement.innerHTML = `
-                <img src="assets/${achievement.badge}" alt="${achievement.name}" width="32" height="32">
+                <img src="assets/${achievement.badge}" alt="${achievement.name}">
                 <span>${achievement.name}</span>
             `;
-            achievementsContainer.appendChild(badgeElement);
+            badgeGrid.appendChild(badgeElement);
         }
     });
 }
@@ -381,6 +381,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Badge Popup Logic
+    const badgePopupOverlay = document.getElementById('badge-popup-overlay');
+    const showBadgesButton = document.getElementById('show-badges-button');
+    const closeBadgePopupButton = document.getElementById('close-badge-popup');
+
+    showBadgesButton.addEventListener('click', () => {
+        badgePopupOverlay.style.display = 'flex';
+    });
+
+    closeBadgePopupButton.addEventListener('click', () => {
+        badgePopupOverlay.style.display = 'none';
+    });
+
+    badgePopupOverlay.addEventListener('click', (event) => {
+        if (event.target === badgePopupOverlay) {
+            badgePopupOverlay.style.display = 'none';
+        }
+    });
 });
 
 // ストーリーアニメーションを開始する関数

@@ -48,9 +48,7 @@
                 <h3>ぼうけんのしょ</h3>
                 <p id="overall-progress"></p>
                 <p id="discovery-count"></p>
-                <div id="achievements">
-                    <!-- アチーブメントバッジはJavaScriptで動的に追加されます -->
-                </div>
+                <button id="show-badges-button">冒険の証を見る</button>
             </div>
 
             <div id="action-buttons">
@@ -59,6 +57,17 @@
             </div>
         </div>
         <button id="toggle-panel-button">書を閉じる</button>
+    </div>
+
+    <!-- Badge Popup -->
+    <div id="badge-popup-overlay" style="display: none;">
+        <div id="badge-popup">
+            <h3>冒険の証</h3>
+            <div id="badge-popup-grid">
+                <!-- 獲得したバッジがここに動的に追加されます -->
+            </div>
+            <button id="close-badge-popup">閉じる</button>
+        </div>
     </div>
 
     <!-- APIキーを定義するファイルを最初に読み込む -->

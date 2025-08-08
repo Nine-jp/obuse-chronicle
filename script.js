@@ -174,11 +174,12 @@ function displaySpotDetails(spot) {
         spotActions.style.display = 'flex';
         if (spot.visited) {
             visitedStatusElement.textContent = '訪問済み';
+            visitedStatusElement.style.display = 'block';
             visitedStatusElement.classList.add('visited');
             recordVisitButton.style.display = 'none';
         } else {
-            visitedStatusElement.textContent = '未訪問';
-            visitedStatusElement.classList.remove('visited');
+            visitedStatusElement.textContent = '';
+            visitedStatusElement.style.display = 'none';
             recordVisitButton.style.display = 'block';
             recordVisitButton.onclick = () => recordVisit(spot.id);
         }

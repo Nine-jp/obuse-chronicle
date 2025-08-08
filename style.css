@@ -251,6 +251,7 @@ button {
     margin-top: 5px;
     width: 100%;
     box-sizing: border-box;
+    font-size: 1.1em;
 }
 #record-visit:active {
     background-color: #007bb5;
@@ -379,7 +380,7 @@ button {
 #record-visit {
     flex: 1;
     text-align: center;
-    padding: 8px 0;
+    padding: 11px 0; /* 訪問済のパディング */
     border-radius: 4px;
 }
 

@@ -103,11 +103,10 @@ async function initMap() {
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
-    infoWindow.setContent(
-        browserHasGeolocation
-            ? `<div style='color: black;'><span style='color: red;'>エラー：</span><br>位置情報サービスに失敗しました。</div>`
-            : `<div style='color: black;'><span style='color: red;'>エラー：</span><br>お使いのブラウザは位置情報に対応していません。</div>`
-    );
+    const contentString = browserHasGeolocation
+        ? `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; color: black; height: 50px; text-align: center;"><span style="color: red;">⚠️ エラー ⚠️</span><br>位置情報サービスに失敗しました。</div>`
+        : `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; color: black; height: 50px; text-align: center;"><span style="color: red;">⚠️ エラー ⚠️</span><br>お使いのブラウザは位置情報に対応していません。</div>`;
+    infoWindow.setContent(contentString);
     infoWindow.open(map);
 }
 

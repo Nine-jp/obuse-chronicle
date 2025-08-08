@@ -105,8 +105,8 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
     infoWindow.setContent(
         browserHasGeolocation
-            ? "エラー: 位置情報サービスに失敗しました。"
-            : "エラー: お使いのブラウザは位置情報に対応していません。"
+            ? `<div style='color: black;'><span style='color: red;'>エラー：</span><br>位置情報サービスに失敗しました。</div>`
+            : `<div style='color: black;'><span style='color: red;'>エラー：</span><br>お使いのブラウザは位置情報に対応していません。</div>`
     );
     infoWindow.open(map);
 }

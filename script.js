@@ -244,9 +244,10 @@ function updateProgress() {
 
 // アチーブメントの定義
 const achievements = [
-    { id: 'achievement_01', name: 'はじめての巡礼者', description: '最初のスポットを訪問する', condition: (data) => data.filter(s => s.visited).length >= 1, badge: 'badge_pilgrim.png' },
-    { id: 'achievement_02', name: '小布施探訪者', description: '5箇所のスポットを訪問する', condition: (data) => data.filter(s => s.visited).length >= 5, badge: 'badge_pilgrim.png' },
-    { id: 'achievement_03', name: '小布施マスター', description: '全てのスポットを訪問する', condition: (data) => data.filter(s => s.visited).length === data.filter(s => s.type === 'shrine' || s.type === 'temple').length, badge: 'badge_pilgrim.png' }
+    { id: 'achievement_01', name: 'はじめての記憶', description: '最初の記憶を刻む', condition: (data) => data.filter(s => s.visited).length >= 1, badge: 'badge_pilgrim.png' },
+    { id: 'achievement_02', name: '記憶の探訪者', description: '5つの記憶を刻む', condition: (data) => data.filter(s => s.visited).length >= 5, badge: 'badge_pilgrim_5.png' },
+    { id: 'achievement_03', name: '記憶の達人', description: '10の記憶を刻む', condition: (data) => data.filter(s => s.visited).length >= 10, badge: 'badge_pilgrim_10.png' },
+    { id: 'achievement_04', name: '記憶の継承者', description: '15の記憶を刻む', condition: (data) => data.filter(s => s.visited).length >= 15, badge: 'badge_pilgrim_15.png' }
 ];
 
 // アチーブメントのチェックと付与 (ブール値を返すように変更)

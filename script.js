@@ -392,8 +392,10 @@ document.addEventListener('DOMContentLoaded', () => {
             infoPanel.classList.toggle('minimized');
             if (infoPanel.classList.contains('minimized')) {
                 toggleButton.textContent = '書を開く';
+                map.setOptions({ gestureHandling: 'greedy' }); // 指1本で操作可能に
             } else {
                 toggleButton.textContent = '書を閉じる';
+                map.setOptions({ gestureHandling: 'cooperative' }); // 指2本で操作（デフォルト）
             }
         });
     }

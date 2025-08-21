@@ -266,9 +266,7 @@ button {
     overflow: hidden !important;
 }
 
-.gm-ui-hover-effect {
-    display: none !important;
-}
+
 
 .info-window-content {
     padding: 10px;
@@ -491,7 +489,4 @@ button {
     height: 24px;
 }
 
-/* Google MapsのUIコントロールを強制的に非表示にする */
-.gm-style-mtc, .gm-fullscreen-control, .gm-svpc, .gm-zoom-pannel, .gmnoprint {
-    display: none !important;
-}
+

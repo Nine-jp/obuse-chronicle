@@ -40,7 +40,9 @@ async function initMap() {
         center: obuse,
         zoom: 14,
         mapId: "OBSE_CHRONICLE_MAP",
-        disableDefaultUI: true // すべてのデフォルトUIコントロールを非表示
+        disableDefaultUI: true, // すべてのデフォルトUIコントロールを非表示
+        zoomControl: false, // ズームコントロールを非表示
+        streetViewControl: false // ストリートビューコントロールを非表示
     });
 
     infoWindow = new google.maps.InfoWindow();

@@ -2,6 +2,8 @@ let map;
 let markers = [];
 let infoWindow;
 let currentInfoWindow = null; // 現在開いている情報ウィンドウを追跡
+let protagonistMarker = null; // 主人公マーカーを追跡
+let AdvancedMarkerElement; // AdvancedMarkerElementクラスを保持
 
 // ストーリーテキストの定義
 const storyText = "古の書物が語る。<br>この地には、深い記憶が眠る。<br>さあ、巡礼の旅へ。";
@@ -31,7 +33,7 @@ let currentSpotsData = loadData();
 // Google Mapの初期化
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    ({ AdvancedMarkerElement } = await google.maps.importLibrary("marker"));
 
     const obuse = { lat: 36.695, lng: 138.318 }; // 小布施町の中心
     map = new Map(document.getElementById('map'), {
@@ -51,19 +53,7 @@ async function initMap() {
                     lat: position.coords.latitude,
                     lng: position.coords.longitude,
                 };
-
-                const protagonistIcon = document.createElement('img');
-                protagonistIcon.src = 'assets/icon_protagonist.png';
-                protagonistIcon.width = 40; // 主人公アイコンのサイズを40に設定
-                protagonistIcon.height = 40;
-
-                new AdvancedMarkerElement({
-                    position: pos,
-                    map: map,
-                    title: "現在地",
-                    content: protagonistIcon, // 主人公のアイコンを設定
-                });
-
+                updateProtagonistMarker(pos);
                 map.setCenter(pos);
             },
             () => {
@@ -77,28 +67,27 @@ async function initMap() {
 
     addMarkers(AdvancedMarkerElement);
     updateProgress();
+}
 
-    // 現在地ボタンのイベントリスナー
-    document.getElementById('current-location-button').addEventListener('click', () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const pos = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    };
-                    map.setCenter(pos);
-                    map.setZoom(16); // ズームレベルを調整
-                },
-                () => {
-                    handleLocationError(true, infoWindow, map.getCenter());
-                }
-            );
-        } else {
-            // Browser doesn't support Geolocation
-            handleLocationError(false, infoWindow, map.getCenter());
-        }
-    });
+// 主人公マーカーを更新する関数
+function updateProtagonistMarker(pos) {
+    if (!AdvancedMarkerElement) return;
+
+    if (protagonistMarker) {
+        protagonistMarker.position = pos;
+    } else {
+        const protagonistIcon = document.createElement('img');
+        protagonistIcon.src = 'assets/icon_protagonist.png';
+        protagonistIcon.width = 40;
+        protagonistIcon.height = 40;
+
+        protagonistMarker = new AdvancedMarkerElement({
+            position: pos,
+            map: map,
+            title: "現在地",
+            content: protagonistIcon,
+        });
+    }
 }
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
@@ -367,6 +356,29 @@ document.addEventListener('DOMContentLoaded', () => {
         showScreen('main-game-container');
         // Google Mapsの初期化はメインゲーム画面表示後に行う
         loadGoogleMapsScript();
+    });
+
+    // 現在地ボタンのイベントリスナー
+    document.getElementById('current-location-button').addEventListener('click', () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+                    updateProtagonistMarker(pos);
+                    map.setCenter(pos);
+                    map.setZoom(16); // ズームレベルを調整
+                },
+                () => {
+                    handleLocationError(true, infoWindow, map.getCenter());
+                }
+            );
+        } else {
+            // Browser doesn't support Geolocation
+            handleLocationError(false, infoWindow, map.getCenter());
+        }
     });
 
     // 情報パネルのトグル機能

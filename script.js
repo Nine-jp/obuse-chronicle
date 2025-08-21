@@ -15,7 +15,8 @@ function loadData() {
         return JSON.parse(savedData);
     } else {
         // 初回ロード時またはデータがない場合は、data.js から初期データをロード
-        return spotsData.map(spot => ({
+        const allSpots = spotsData.concat(sobaRestaurantsData); // 両方の配列を結合
+        return allSpots.map(spot => ({
             ...spot,
             visited: false, // visited プロパティを初期化
             achievements: [] // achievements プロパティを初期化

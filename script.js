@@ -123,6 +123,14 @@ function addMarkers(AdvancedMarkerElement) {
             }
             displaySpotDetails(spot);
             currentInfoWindow = infoWindow; // 現在開いている情報ウィンドウを更新
+
+            // パネルが最小化されていたら開く
+            const infoPanel = document.getElementById('info-panel');
+            const toggleButton = document.getElementById('toggle-panel-button');
+            if (infoPanel.classList.contains('minimized')) {
+                infoPanel.classList.remove('minimized');
+                toggleButton.textContent = '書を閉じる';
+            }
         });
         markers.push(marker);
     });

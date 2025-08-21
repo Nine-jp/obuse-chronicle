@@ -4,7 +4,7 @@ let infoWindow;
 let currentInfoWindow = null; // 現在開いている情報ウィンドウを追跡
 
 // ストーリーテキストの定義
-const storyText = "古の書物が語る。\nこの地には、深い記憶が眠る。\nさあ、巡礼の旅へ。";
+const storyText = "古の書物が語る。<br>この地には、深い記憶が眠る。<br>さあ、巡礼の旅へ。";
 
 // ローカルストレージからデータをロードする関数
 function loadData() {
@@ -29,14 +29,16 @@ function saveData(data) {
 let currentSpotsData = loadData();
 
 // Google Mapの初期化
-function initMap() {
+async function initMap() {
+    const { Map } = await google.maps.importLibrary("maps");
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
     const obuse = { lat: 36.695, lng: 138.318 }; // 小布施町の中心
-    map = new google.maps.Map(document.getElementById('map'), {
+    map = new Map(document.getElementById('map'), {
         center: obuse,
         zoom: 14,
-        mapTypeControl: false, // マップタイプコントロールを非表示
-        streetViewControl: false, // ストリートビューコントロールを非表示
-        fullscreenControl: false // フルスクリーンコントロールを非表示
+        mapId: "OBSE_CHRONICLE_MAP",
+        disableDefaultUI: true // すべてのデフォルトUIコントロールを非表示
     });
 
     infoWindow = new google.maps.InfoWindow();
@@ -50,17 +52,16 @@ function initMap() {
                     lng: position.coords.longitude,
                 };
 
-                new google.maps.Marker({
+                const protagonistIcon = document.createElement('img');
+                protagonistIcon.src = 'assets/icon_protagonist.png';
+                protagonistIcon.width = 40; // 主人公アイコンのサイズを40に設定
+                protagonistIcon.height = 40;
+
+                new AdvancedMarkerElement({
                     position: pos,
                     map: map,
                     title: "現在地",
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 7,
-                        fillColor: "#4285F4",
-                        fillOpacity: 1,
-                        strokeWeight: 0,
-                    },
+                    content: protagonistIcon, // 主人公のアイコンを設定
                 });
 
                 map.setCenter(pos);
@@ -74,7 +75,7 @@ function initMap() {
         handleLocationError(false, infoWindow, map.getCenter());
     }
 
-    addMarkers();
+    addMarkers(AdvancedMarkerElement);
     updateProgress();
 
     // 現在地ボタンのイベントリスナー
@@ -102,20 +103,25 @@ function initMap() {
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
-    
-    
+    const contentString = browserHasGeolocation
+        ? `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; color: black; height: 50px; text-align: center; line-height: 1;"><span style="color: red;">⚠️ エラー ⚠️</span><br>位置情報サービスに失敗しました。</div>`
+        : `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; color: black; height: 50px; text-align: center; line-height: 1;"><span style="color: red;">⚠️ エラー ⚠️</span><br>お使いのブラウザは位置情報に対応していません。</div>`;
+    infoWindow.setContent(contentString);
+    infoWindow.open(map);
 }
 
 // マーカーの追加
-function addMarkers() {
+function addMarkers(AdvancedMarkerElement) {
     currentSpotsData.forEach((spot, index) => {
-        const marker = new google.maps.Marker({
+        const icon = getMarkerIcon(spot.type);
+        const marker = new AdvancedMarkerElement({
             position: { lat: spot.latitude, lng: spot.longitude },
             map: map,
             title: spot.name,
-            icon: getMarkerIcon(spot.type), // visited パラメータを削除
-            opacity: spot.visited ? 0.5 : 1.0 // 訪問済みの場合、半透明にする
+            content: icon,
         });
+
+        marker.content.style.opacity = spot.visited ? 0.5 : 1.0;
 
         marker.addListener('click', () => {
             // 既に開いている情報ウィンドウがあれば閉じる
@@ -148,10 +154,11 @@ function getMarkerIcon(type) {
         iconUrl = iconBase + 'icon_soba.png'; // お蕎麦屋さんは訪問済みアイコンなし
     }
 
-    return {
-        url: iconUrl,
-        scaledSize: new google.maps.Size(iconSize, iconSize) // アイコンのサイズ
-    };
+    const icon = document.createElement('img');
+    icon.src = iconUrl;
+    icon.width = iconSize;
+    icon.height = iconSize;
+    return icon;
 }
 
 // スポット詳細の表示
@@ -161,20 +168,24 @@ function displaySpotDetails(spot) {
 
     const visitedStatusElement = document.getElementById('visited-status');
     const recordVisitButton = document.getElementById('record-visit');
+    const spotActions = document.getElementById('spot-actions');
 
     if (spot.type === 'shrine' || spot.type === 'temple') {
+        spotActions.style.display = 'flex';
         if (spot.visited) {
-            visitedStatusElement.textContent = '訪問済み';
+            visitedStatusElement.textContent = '記憶済';
+            visitedStatusElement.style.display = 'block';
+            visitedStatusElement.classList.add('visited');
             recordVisitButton.style.display = 'none';
         } else {
-            visitedStatusElement.textContent = '未訪問';
+            visitedStatusElement.textContent = '';
+            visitedStatusElement.style.display = 'none';
+            visitedStatusElement.classList.remove('visited');
             recordVisitButton.style.display = 'block';
             recordVisitButton.onclick = () => recordVisit(spot.id);
         }
     } else {
-        // お蕎麦屋さんの場合は訪問ステータスと記録ボタンを非表示
-        visitedStatusElement.textContent = '';
-        recordVisitButton.style.display = 'none';
+        spotActions.style.display = 'none';
     }
 }
 
@@ -218,7 +229,7 @@ function updateMarkerIcon(spotId, visited) {
     const markerIndex = currentSpotsData.findIndex(s => s.id === spotId);
     if (markerIndex !== -1) {
         // アイコン自体は変更せず、透明度のみを変更
-        markers[markerIndex].setOpacity(visited ? 0.5 : 1.0);
+        markers[markerIndex].content.style.opacity = visited ? 0.5 : 1.0;
     }
 }
 
@@ -226,19 +237,17 @@ function updateMarkerIcon(spotId, visited) {
 function updateProgress() {
     const totalSpots = currentSpotsData.filter(s => s.type === 'shrine' || s.type === 'temple').length;
     const visitedSpots = currentSpotsData.filter(s => (s.type === 'shrine' || s.type === 'temple') && s.visited).length;
-    const discoveryCount = currentSpotsData.filter(s => s.visited).length; // 訪問済みスポットの総数
-
     document.getElementById('overall-progress').textContent = `踏破率: ${visitedSpots} / ${totalSpots} 箇所`;
-    document.getElementById('discovery-count').textContent = `発見数: ${discoveryCount} 箇所`;
 
     updateAchievementsDisplay();
 }
 
 // アチーブメントの定義
 const achievements = [
-    { id: 'achievement_01', name: 'はじめての巡礼者', description: '最初のスポットを訪問する', condition: (data) => data.filter(s => s.visited).length >= 1, badge: 'badge_pilgrim.png' },
-    { id: 'achievement_02', name: '小布施探訪者', description: '5箇所のスポットを訪問する', condition: (data) => data.filter(s => s.visited).length >= 5, badge: 'badge_pilgrim.png' },
-    { id: 'achievement_03', name: '小布施マスター', description: '全てのスポットを訪問する', condition: (data) => data.filter(s => s.visited).length === data.filter(s => s.type === 'shrine' || s.type === 'temple').length, badge: 'badge_pilgrim.png' }
+    { id: 'achievement_01', name: 'はじめての記憶', description: '最初の記憶を刻む', condition: (data) => data.filter(s => s.visited).length >= 1, badge: 'badge_pilgrim.png' },
+    { id: 'achievement_02', name: '記憶の探訪者', description: '5つの記憶を刻む', condition: (data) => data.filter(s => s.visited).length >= 5, badge: 'badge_pilgrim_5.png' },
+    { id: 'achievement_03', name: '記憶の達人', description: '10の記憶を刻む', condition: (data) => data.filter(s => s.visited).length >= 10, badge: 'badge_pilgrim_10.png' },
+    { id: 'achievement_04', name: '記憶の継承者', description: '15の記憶を刻む', condition: (data) => data.filter(s => s.visited).length >= 15, badge: 'badge_pilgrim_15.png' }
 ];
 
 // アチーブメントのチェックと付与 (ブール値を返すように変更)
@@ -264,8 +273,8 @@ function checkAchievements() {
 
 // アチーブメント表示の更新
 function updateAchievementsDisplay() {
-    const achievementsContainer = document.getElementById('achievements');
-    achievementsContainer.innerHTML = ''; // クリア
+    const badgeGrid = document.getElementById('badge-popup-grid');
+    badgeGrid.innerHTML = ''; // クリア
 
     const earnedAchievementIds = new Set();
     currentSpotsData.forEach(spot => {
@@ -277,10 +286,10 @@ function updateAchievementsDisplay() {
             const badgeElement = document.createElement('div');
             badgeElement.classList.add('achievement-badge');
             badgeElement.innerHTML = `
-                <img src="assets/${achievement.badge}" alt="${achievement.name}" width="32" height="32">
+                <img src="assets/${achievement.badge}" alt="${achievement.name}">
                 <span>${achievement.name}</span>
             `;
-            achievementsContainer.appendChild(badgeElement);
+            badgeGrid.appendChild(badgeElement);
         }
     });
 }
@@ -302,7 +311,7 @@ document.getElementById('clear-footsteps').addEventListener('click', () => {
         // マーカーを全て削除して再追加することでアイコンをリセット
         markers.forEach(marker => marker.setMap(null));
         markers = [];
-        addMarkers();
+        addMarkers(google.maps.marker.AdvancedMarkerElement);
         updateProgress();
         playSound('se_quest_complete_fanfare.mp3'); // リセット音
     }
@@ -316,7 +325,7 @@ document.getElementById('reset-adventure').addEventListener('click', () => {
         // マーカーを全て削除して再追加することでアイコンをリセット
         markers.forEach(marker => marker.setMap(null));
         markers = [];
-        addMarkers();
+        addMarkers(google.maps.marker.AdvancedMarkerElement);
         updateProgress();
         playSound('se_quest_complete_fanfare.mp3'); // リセット音
     }
@@ -333,7 +342,7 @@ function showScreen(screenId) {
 // Google Maps APIのスクリプトを動的に読み込む
 function loadGoogleMapsScript() {
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap&loading=async&libraries=marker`;
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);
@@ -374,12 +383,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Badge Popup Logic
+    const badgePopupOverlay = document.getElementById('badge-popup-overlay');
+    const showBadgesButton = document.getElementById('show-badges-button');
+    const closeBadgePopupButton = document.getElementById('close-badge-popup');
+
+    showBadgesButton.addEventListener('click', () => {
+        badgePopupOverlay.style.display = 'flex';
+    });
+
+    closeBadgePopupButton.addEventListener('click', () => {
+        badgePopupOverlay.style.display = 'none';
+    });
+
+    badgePopupOverlay.addEventListener('click', (event) => {
+        if (event.target === badgePopupOverlay) {
+            badgePopupOverlay.style.display = 'none';
+        }
+    });
 });
 
 // ストーリーアニメーションを開始する関数
 function startStoryAnimation() {
     const storyTextElement = document.getElementById('story-text');
-    storyTextElement.textContent = storyText;
+    storyTextElement.innerHTML = storyText;
 
     // フェードイン
     storyTextElement.classList.remove('fade-out');
@@ -410,3 +438,15 @@ function endStoryAnimation() {
         window.initMap = initMap;
     }
 }
+
+// 画面サイズが変更されたときにマーカーアイコンを更新
+window.addEventListener('resize', () => {
+    // マップが初期化されている場合のみ実行
+    if (map) {
+        markers.forEach((marker, index) => {
+            const spot = currentSpotsData[index];
+            const icon = getMarkerIcon(spot.type);
+            marker.content = icon;
+        });
+    }
+});

@@ -133,7 +133,7 @@ body {
     align-items: center; /* Center text vertically */
     justify-content: center; /* Center text horizontally */
     font-family: 'DotGothic16', sans-serif;
-    font-size: 1.5em;
+    font-size: 1.3em; /* フォントサイズを少し小さく */
     color: #fff;
     line-height: 1.8;
     text-align: center; /* Ensure text is centered */
@@ -208,33 +208,9 @@ body {
     font-size: 0.85em;
 }
 
-#achievements {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 10px;
-}
-
-.achievement-badge {
-    width: 80px;
-    height: auto;
-    background-color: #eee;
-    border: 1px solid #ddd;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    text-align: center;
-    color: #666;
-    padding: 5px;
-    box-sizing: border-box;
-}
-
-.achievement-badge img {
-    vertical-align: middle;
-    margin-bottom: 5px;
+#show-badges-button {
+    background-color: #6c757d; /* グレー系 */
+    margin-bottom: 10px;
 }
 
 #action-buttons {
@@ -275,6 +251,7 @@ button {
     margin-top: 5px;
     width: 100%;
     box-sizing: border-box;
+    font-size: 1.1em;
 }
 #record-visit:active {
     background-color: #007bb5;
@@ -322,6 +299,99 @@ button {
 
 .info-window-content button:hover {
     background-color: #218838;
+}
+
+/* Badge Popup Styles */
+#badge-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+#badge-popup {
+    background-color: #f0e6d2; /* 羊皮紙のような色 */
+    border: 5px solid #8c6b4f; /* 木枠のような色 */
+    border-radius: 15px;
+    padding: 20px;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+#badge-popup h3 {
+    font-family: 'DotGothic16', sans-serif;
+    color: #5a3a22;
+    margin-top: 0;
+}
+
+#badge-popup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.achievement-badge {
+    background-color: #fff;
+    border: 2px solid #d4c8b0;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.achievement-badge img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 5px;
+}
+
+.achievement-badge span {
+    font-size: 12px;
+    color: #5a3a22;
+}
+
+#close-badge-popup {
+    background-color: #8c6b4f;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+#spot-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#visited-status,
+#record-visit {
+    flex: 1;
+    text-align: center;
+    padding: 11px 0; /* 訪問済のパディング */
+    border-radius: 4px;
+}
+
+#visited-status {
+    display: none; /* デフォルトで非表示 */
+}
+
+#visited-status.visited {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
 }
 
 /* レスポンシブデザインの調整 */
@@ -397,7 +467,7 @@ button {
 
 #current-location-button {
     position: absolute;
-    bottom: 20px;
+    top: 20px;
     right: 20px;
     background-color: #fff;
     border: 2px solid #ccc;
@@ -419,4 +489,9 @@ button {
 #current-location-button img {
     width: 24px;
     height: 24px;
+}
+
+/* Google MapsのUIコントロールを強制的に非表示にする */
+.gm-style-mtc, .gm-fullscreen-control, .gm-svpc, .gm-zoom-pannel, .gmnoprint {
+    display: none !important;
 }

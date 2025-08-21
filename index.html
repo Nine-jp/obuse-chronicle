@@ -40,25 +40,34 @@
             <div id="spot-details">
                 <h2 id="spot-name"></h2>
                 <p id="spot-description"></p>
-                <p id="visited-status"></p>
-                <button id="record-visit" style="display: none;">記録する</button>
-            </div>
-
-            <div id="progress-section">
-                <h3>ぼうけんのしょ</h3>
-                <p id="overall-progress"></p>
-                <p id="discovery-count"></p>
-                <div id="achievements">
-                    <!-- アチーブメントバッジはJavaScriptで動的に追加されます -->
+                <div id="spot-actions">
+                    <button id="record-visit" style="display: none;">巡礼を記憶</button>
+                    <div id="visited-status"></div>
                 </div>
             </div>
 
+            <div id="progress-section">
+                <button id="show-badges-button">記憶の証</button>
+                <p id="overall-progress"></p>
+            </div>
+
             <div id="action-buttons">
-                <button id="clear-footsteps">足跡を消す</button>
-                <button id="reset-adventure">冒険をリセット</button>
+                <button id="clear-footsteps">記憶を消す</button>
+                <button id="reset-adventure">新たな旅立ち</button>
             </div>
         </div>
         <button id="toggle-panel-button">書を閉じる</button>
+    </div>
+
+    <!-- Badge Popup -->
+    <div id="badge-popup-overlay" style="display: none;">
+        <div id="badge-popup">
+            <h3>冒険の証</h3>
+            <div id="badge-popup-grid">
+                <!-- 獲得したバッジがここに動的に追加されます -->
+            </div>
+            <button id="close-badge-popup">閉じる</button>
+        </div>
     </div>
 
     <!-- APIキーを定義するファイルを最初に読み込む -->
